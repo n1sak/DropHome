@@ -1,0 +1,14 @@
+node_modules/
+dist/
+.DS_Store
+*.log
+.env
+.env.*
+!.env.example
+
+# runtime data (uploaded files + json db)
+server/data/
+
+# generated single-file build for the artifact
+artifact/
+dist-artifact/
