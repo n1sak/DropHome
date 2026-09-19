@@ -19,6 +19,7 @@ import {
   type CustomArt, type FileItem, type Furniture, type FurnitureKind, type House, type Placement, type Room, type RoomKind, type View,
 } from '../model/types';
 import { connect, type Store } from '../storage';
+import { MemoryStore } from '../storage/memory';
 
 export interface Toast {
   id: number;
@@ -153,10 +154,15 @@ let unpackAbort: AbortController | null = null;
 let initStarted = false;
 let unsubscribe: (() => void) | undefined;
 
+let savePending = false;
 const persistHouse = (house: House) => {
   clearTimeout(saveTimer);
+  savePending = true;
   saveTimer = setTimeout(() => {
-    store?.saveHouse(house).catch(() => undefined);
+    store
+      ?.saveHouse(house)
+      .catch(() => undefined)
+      .finally(() => (savePending = false));
   }, 350);
 };
 
@@ -198,9 +204,19 @@ export const useApp = create<AppState>((set, get) => {
     return moved.length;
   };
 
-  const reload = async () => {
-    const { house, files } = await store.load();
-    if (house) set({ house, files });
+  // Another window (or the mailbox drop link) changed something. Wait for a quiet moment, then take the server's word for it.
+  let reloadTimer: ReturnType<typeof setTimeout> | undefined;
+  const reload = () => {
+    clearTimeout(reloadTimer);
+    reloadTimer = setTimeout(async () => {
+      if (get().unpacking || get().uploading > 0 || savePending) return reload();
+      try {
+        const { house, files } = await store.load();
+        if (house) set({ house, files });
+      } catch {
+        /* offline for a moment: the next event will catch us up */
+      }
+    }, 350);
   };
 
   return {
@@ -231,47 +247,59 @@ export const useApp = create<AppState>((set, get) => {
       if (initStarted) return; // React strict mode mounts twice in dev; never seed twice
       initStarted = true;
       warmUp();
-      const backend = await connect();
-      store = backend.store;
-      set({ storeKind: store.kind, serverAi: backend.serverAi });
 
-      let { house, files } = await store.load();
-      if (!house) {
-        house = defaultHouse('My house');
-        await store.saveHouse(house);
-      }
-      set({ house, files });
+      const boot = async (backend: { store: Store; serverAi: boolean }) => {
+        store = backend.store;
+        set({ storeKind: store.kind, serverAi: backend.serverAi });
 
-      if (!house.seeded) {
-        const total = SEEDS.length;
-        set({ booting: { step: 'Moving in the sample files', done: 0, total } });
-        const added: FileItem[] = [];
-        let done = 0;
-        const queue = [...SEEDS];
-        const worker = async () => {
-          for (let seed = queue.shift(); seed; seed = queue.shift()) {
-            try {
-              const { meta, blob } = await buildSeed(seed);
-              added.push(await store.addFile(meta, blob));
-            } catch {
-              /* one sample failing should not stop the move */
-            }
-            done += 1;
-            set({ booting: { step: 'Moving in the sample files', done, total } });
-          }
-        };
-        await Promise.all([worker(), worker(), worker(), worker()]);
-        house = { ...house, seeded: true, updatedAt: Date.now() };
-        await store.saveHouse(house);
-        files = [...files, ...added];
+        let { house, files } = await store.load();
+        const furnish = !house || !house.seeded;
+        if (!house) house = defaultHouse('My house');
+        if (furnish) {
+          // written first: if the page reloads halfway through, we get fewer samples, never doubles
+          house = { ...house, seeded: true, updatedAt: Date.now() };
+          await store.saveHouse(house);
+        }
         set({ house, files });
+
+        if (furnish) {
+          const total = SEEDS.length;
+          set({ booting: { step: 'Moving in the sample files', done: 0, total } });
+          const added: FileItem[] = [];
+          let done = 0;
+          const queue = [...SEEDS];
+          const worker = async () => {
+            for (let seed = queue.shift(); seed; seed = queue.shift()) {
+              try {
+                const { meta, blob } = await buildSeed(seed);
+                added.push(await store.addFile(meta, blob));
+              } catch {
+                /* one sample failing should not stop the move */
+              }
+              done += 1;
+              set({ booting: { step: 'Moving in the sample files', done, total } });
+            }
+          };
+          await Promise.all([worker(), worker(), worker(), worker()]);
+          set({ files: [...files, ...added] });
+        }
+      };
+
+      let backend = await connect();
+      try {
+        await boot(backend);
+      } catch {
+        // storage refused us (server went away, browser blocked site data): carry on in memory rather than hang on the splash
+        backend = { store: new MemoryStore(), serverAi: false };
+        await boot(backend);
+        get().toast('Storage is not available, so this visit is kept in memory only.', { tone: 'warn' });
       }
 
       set({ ready: true, booting: null, brain: await brainKind(backend.serverAi) });
       // the artifact capability can resolve a moment after load
       setTimeout(async () => set({ brain: await brainKind(get().serverAi) }), 4000);
       unsubscribe?.();
-      unsubscribe = store.subscribe?.(() => void reload());
+      unsubscribe = store.subscribe?.(reload);
     },
 
     goHome() {
@@ -393,7 +421,7 @@ export const useApp = create<AppState>((set, get) => {
       if (!items.length) return;
       const flights = items.slice(0, 6).map((f) => ({ id: flightSeq++, fileId: f.id, from: { furnitureId: f.furnitureId }, to: { roomId: YARD_ID, furnitureId: BINS_ID } }));
       set((s) => ({ flights: [...s.flights, ...flights], previewId: null }));
-      patch(items.map((f) => ({ id: f.id, patch: { trashed: { at: now, roomId: f.roomId, furnitureId: f.furnitureId }, roomId: YARD_ID, furnitureId: BINS_ID, pinned: false } })));
+      patch(items.map((f) => ({ id: f.id, patch: { trashed: { at: now, roomId: f.roomId, furnitureId: f.furnitureId, pinned: f.pinned }, roomId: YARD_ID, furnitureId: BINS_ID, pinned: false } })));
       sounds.trash();
       get().toast(`Put ${items.length === 1 ? `"${items[0].name}"` : count(items.length, 'thing')} in the bins.`, {
         action: { label: 'Undo', run: () => get().restore(items.map((f) => f.id)) },
@@ -406,7 +434,7 @@ export const useApp = create<AppState>((set, get) => {
       patch(
         items.map((f) => {
           const home = f.trashed && findFurniture(house, f.trashed.furnitureId) ? f.trashed : { roomId: YARD_ID, furnitureId: PORCH_ID };
-          return { id: f.id, patch: { trashed: undefined, roomId: home.roomId, furnitureId: home.furnitureId, touchedAt: Date.now() } };
+          return { id: f.id, patch: { trashed: undefined, roomId: home.roomId, furnitureId: home.furnitureId, pinned: !!f.trashed?.pinned, touchedAt: Date.now() } };
         }),
       );
     },
@@ -436,38 +464,41 @@ export const useApp = create<AppState>((set, get) => {
       if (get().unpacking) return;
       const waiting = get().files.filter((f) => f.furnitureId === containerId && !f.trashed);
       if (!waiting.length) return get().toast('Nothing to unpack.');
-      const brain = await brainKind(get().serverAi);
-      set({ unpacking: { containerId, total: waiting.length, done: 0, brain }, view: { level: 'house' }, previewId: null });
+      // claimed before the first await, so a double click cannot start two runs
+      set({ unpacking: { containerId, total: waiting.length, done: 0, brain: get().brain }, view: { level: 'house' }, previewId: null });
       unpackAbort = new AbortController();
+      try {
+        const started = Date.now();
+        const result = await sortFiles(waiting, get().house, { serverAi: get().serverAi, signal: unpackAbort.signal });
+        // let the camera finish pulling back before boxes start flying
+        await new Promise((r) => setTimeout(r, Math.max(0, 900 - (Date.now() - started))));
+        set((s) => ({ brain: result.brain === 'rules' ? s.brain : result.brain, unpacking: s.unpacking && { ...s.unpacking, brain: result.brain } }));
 
-      const started = Date.now();
-      const result = await sortFiles(waiting, get().house, { serverAi: get().serverAi, signal: unpackAbort.signal });
-      // let the camera finish pulling back before boxes start flying
-      await new Promise((r) => setTimeout(r, Math.max(0, 900 - (Date.now() - started))));
-      set((s) => ({ brain: result.brain === 'rules' ? s.brain : result.brain, unpacking: s.unpacking && { ...s.unpacking, brain: result.brain } }));
+        const undo: { id: string; patch: Partial<FileItem> }[] = [];
+        const tally = new Map<string, number>();
+        for (const p of result.placements) {
+          const file = get().files.find((f) => f.id === p.id);
+          if (!file || !findFurniture(get().house, p.furnitureId)) continue;
+          undo.push({ id: file.id, patch: { roomId: file.roomId, furnitureId: file.furnitureId, reason: file.reason, tags: file.tags, pinned: file.pinned } });
+          set((s) => ({ flights: [...s.flights, { id: flightSeq++, fileId: file.id, from: { furnitureId: containerId }, to: { roomId: p.roomId, furnitureId: p.furnitureId } }] }));
+          await new Promise((r) => setTimeout(r, 260));
+          patch([{ id: file.id, patch: { roomId: p.roomId, furnitureId: p.furnitureId, reason: p.reason, tags: [...new Set([...file.tags, ...(p.tags ?? [])])], pinned: file.pinned || !!p.pin, touchedAt: Date.now() } }]);
+          tally.set(p.roomId, (tally.get(p.roomId) ?? 0) + 1);
+          set((s) => ({ unpacking: s.unpacking && { ...s.unpacking, done: s.unpacking.done + 1 } }));
+        }
+        await new Promise((r) => setTimeout(r, 700));
 
-      const undo: { id: string; patch: Partial<FileItem> }[] = [];
-      const tally = new Map<string, number>();
-      for (const p of result.placements) {
-        const file = get().files.find((f) => f.id === p.id);
-        if (!file) continue;
-        undo.push({ id: file.id, patch: { roomId: file.roomId, furnitureId: file.furnitureId, reason: file.reason, tags: file.tags, pinned: file.pinned } });
-        set((s) => ({ flights: [...s.flights, { id: flightSeq++, fileId: file.id, from: { furnitureId: containerId }, to: { roomId: p.roomId, furnitureId: p.furnitureId } }] }));
-        await new Promise((r) => setTimeout(r, 260));
-        patch([{ id: file.id, patch: { roomId: p.roomId, furnitureId: p.furnitureId, reason: p.reason, tags: [...new Set([...file.tags, ...(p.tags ?? [])])], pinned: file.pinned || !!p.pin, touchedAt: Date.now() } }]);
-        tally.set(p.roomId, (tally.get(p.roomId) ?? 0) + 1);
-        set((s) => ({ unpacking: s.unpacking && { ...s.unpacking, done: s.unpacking.done + 1 } }));
+        const rooms = [...tally.entries()].map(([id, n]) => `${n} to the ${get().house.rooms.find((r) => r.id === id)?.name.toLowerCase() ?? 'house'}`);
+        const by = result.brain === 'rules' ? 'the built-in rules' : 'Claude';
+        if (undo.length) {
+          get().toast(`Unpacked ${count(undo.length, 'box', 'boxes')} with ${by}: ${rooms.join(', ')}.`, { tone: 'good', action: { label: 'Undo', run: () => patch(undo) } });
+        } else {
+          get().toast('Could not find a place for those. Build a room for them in Renovate, or drag them in by hand.', { tone: 'warn' });
+        }
+      } finally {
+        set({ unpacking: null });
+        unpackAbort = null;
       }
-      await new Promise((r) => setTimeout(r, 700));
-      set({ unpacking: null });
-      unpackAbort = null;
-
-      const rooms = [...tally.entries()].map(([id, n]) => `${n} to the ${get().house.rooms.find((r) => r.id === id)?.name.toLowerCase() ?? 'house'}`);
-      const by = result.brain === 'rules' ? 'the built-in rules' : 'Claude';
-      get().toast(`Unpacked ${count(undo.length, 'box', 'boxes')} with ${by}: ${rooms.join(', ')}.`, {
-        tone: 'good',
-        action: { label: 'Undo', run: () => patch(undo) },
-      });
     },
 
     cancelUnpack() {
@@ -499,7 +530,11 @@ export const useApp = create<AppState>((set, get) => {
 
     setRenovate(on) {
       sounds.step();
-      set((s) => ({ renovate: on, selectedFurnitureId: null, buildTarget: null, previewId: null, view: on && s.view.level === 'container' ? { level: 'room', roomId: s.view.roomId } : s.view }));
+      set((s) => {
+        const inYard = s.view.roomId === YARD_ID;
+        const view: View = on && s.view.level === 'container' ? (inYard ? { level: 'house' } : { level: 'room', roomId: s.view.roomId }) : s.view;
+        return { renovate: on, selectedFurnitureId: null, buildTarget: null, previewId: null, view };
+      });
     },
     selectFurniture(id) {
       set({ selectedFurnitureId: id });
@@ -571,12 +606,19 @@ export const useApp = create<AppState>((set, get) => {
       editHouse((hh) => ({ ...hh, levels: floor > 0 ? { ...hh.levels, top: floor - 1 } : { ...hh.levels, bottom: floor + 1 } }));
     },
     addFurniture(roomId, kind) {
-      const piece = makeFurniture(kind);
+      const span = get().house.rooms.find((r) => r.id === roomId)?.span ?? 1;
+      const k = COL_W / (span * COL_W + (span - 1) * GAP); // catalog sizes are for a one-cell room
+      const base = makeFurniture(kind);
+      const piece = { ...base, w: Math.round(base.w * k * 2) / 2, x: Math.round((50 - (base.w * k) / 2) * 2) / 2 };
       editHouse((h) => ({ ...h, rooms: h.rooms.map((r) => (r.id === roomId ? { ...r, furniture: [...r.furniture, piece] } : r)) }));
       set({ selectedFurnitureId: piece.id });
       sounds.build();
     },
     updateFurniture(roomId, furnitureId, p) {
+      if (p.role && SMART_ROLES.includes(p.role)) {
+        const moved = sendToPorch([furnitureId]);
+        if (moved) get().toast(`A live view cannot hold files, so ${count(moved, 'thing')} went back to the porch.`);
+      }
       editHouse((h) => ({ ...h, rooms: h.rooms.map((r) => (r.id === roomId ? { ...r, furniture: r.furniture.map((f) => (f.id === furnitureId ? { ...f, ...p } : f)) } : r)) }));
     },
     removeFurniture(roomId, furnitureId) {

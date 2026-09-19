@@ -11,8 +11,17 @@ export class Db {
     this.data = empty();
     try {
       this.data = { ...empty(), ...JSON.parse(fs.readFileSync(file, 'utf8')) };
-    } catch {
-      /* first run, or an unreadable file: start clean */
+    } catch (e) {
+      if (e.code !== 'ENOENT') {
+        // never overwrite a database we could not read: set it aside and say so
+        const aside = `${file}.unreadable-${Date.now()}`;
+        try {
+          fs.renameSync(file, aside);
+        } catch {
+          /* nothing more we can do */
+        }
+        console.error(`Could not read ${file} (${e.message}). It was moved to ${aside} and a fresh house was started.`);
+      }
     }
   }
 
@@ -20,8 +29,24 @@ export class Db {
     if (this.timer) return;
     this.timer = setTimeout(() => {
       this.timer = null;
-      this.flush();
+      try {
+        this.flush();
+      } catch (e) {
+        console.error(`Could not save ${this.file}: ${e.message}`); // a full disk must not take the server down
+      }
     }, 40);
+  }
+
+  /** Write immediately if a save is pending. Used on shutdown. */
+  flushNow() {
+    if (!this.timer) return;
+    clearTimeout(this.timer);
+    this.timer = null;
+    try {
+      this.flush();
+    } catch (e) {
+      console.error(`Could not save ${this.file}: ${e.message}`);
+    }
   }
 
   flush() {

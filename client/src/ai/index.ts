@@ -116,14 +116,19 @@ function parseLoose(text: string): unknown {
   } catch {
     const from = text.search(/[[{]/);
     const to = Math.max(text.lastIndexOf(']'), text.lastIndexOf('}'));
-    if (from >= 0 && to > from) {
+    if (from < 0 || to <= from) return null;
+    try {
+      return JSON.parse(text.slice(from, to + 1));
+    } catch {
+      // a reply cut off mid-array: keep every object that did finish
+      const lastWhole = text.lastIndexOf('}');
+      if (text[from] !== '[' || lastWhole <= from) return null;
       try {
-        return JSON.parse(text.slice(from, to + 1));
+        return JSON.parse(`${text.slice(from, lastWhole + 1)}]`);
       } catch {
         return null;
       }
     }
-    return null;
   }
 }
 

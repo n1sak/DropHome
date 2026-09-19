@@ -50,8 +50,12 @@ export function cameraFor(view: View, geo: Geometry, house: House, s: StageSize,
     }
   }
 
+  // Wide screens see the whole lot. Tall or half-width windows still get the porch, mailbox and bins.
+  // Only a phone crops to the house itself, and there the bottom bar has buttons for the yard.
   const wide = s.w / Math.max(1, s.h) > 1.15;
-  const target: Rect = wide ? { x: 0, y: 0, w: geo.lot.w, h: geo.lot.h } : pad(geo.houseBounds, 6);
+  const b = geo.houseBounds;
+  const withYard: Rect = { x: geo.body.x - 310, y: b.y, w: geo.body.w + 310 + 190, h: b.h };
+  const target: Rect = wide ? { x: 0, y: 0, w: geo.lot.w, h: geo.lot.h } : narrow ? pad(b, 6) : pad(withYard, 6);
   const frame: Rect = { x: 8 + side, y: TOPBAR + 4, w: s.w - 16 - side, h: s.h - TOPBAR - (narrow ? 84 : 66) - (hint && !narrow ? 40 : 0) };
   return fit(target, frame, 2);
 }

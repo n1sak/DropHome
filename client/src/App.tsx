@@ -16,8 +16,10 @@ import { SpringClean } from './components/SpringClean';
 import { Stage } from './components/Stage';
 import { Toasts } from './components/Toasts';
 import { TopBar } from './components/TopBar';
+import { collectDroppedFiles } from './lib/dropFiles';
 import { dropTargetAt } from './lib/dropTarget';
 import { sounds } from './lib/sound';
+import { BINS_ID } from './model/types';
 import { useApp } from './store/store';
 
 /** Day or night: the person's toggle wins, then the host page's theme, then the device setting. */
@@ -85,8 +87,13 @@ export default function App() {
     if (s.dragging?.[0] === 'external') s.setDragging(null);
     if (!e.dataTransfer?.files.length) return;
     e.preventDefault();
-    const target = dropTargetAt(e.clientX, e.clientY, s.house);
-    void s.addFiles([...e.dataTransfer.files], target ?? undefined);
+    const hit = dropTargetAt(e.clientX, e.clientY, s.house);
+    // new files never go straight into the bins: anything dropped there waits on the porch instead
+    const target = hit && hit.furnitureId !== BINS_ID ? hit : undefined;
+    void collectDroppedFiles(e.dataTransfer).then((files) => {
+      if (files.length) void s.addFiles(files, target);
+      else s.toast('There was nothing in that folder to bring in.');
+    });
   };
 
   return (

@@ -48,11 +48,12 @@ export function useFileDrag(file: FileItem, onTap: () => void) {
     const onUp = (ev: PointerEvent) => {
       window.removeEventListener('pointermove', onMove);
       window.removeEventListener('pointerup', onUp);
+      window.removeEventListener('pointercancel', onUp);
       cancelAnimationFrame(raf);
       if (!active) return;
       document.body.classList.remove('is-dragging-file');
       const app = useApp.getState();
-      const target = dropTargetAt(ev.clientX, ev.clientY, app.house);
+      const target = ev.type === 'pointercancel' ? null : dropTargetAt(ev.clientX, ev.clientY, app.house);
       useDrag.setState({ file: null, label: '' });
       app.setDragging(null);
       if (target && target.furnitureId !== file.furnitureId) {
@@ -64,6 +65,7 @@ export function useFileDrag(file: FileItem, onTap: () => void) {
 
     window.addEventListener('pointermove', onMove);
     window.addEventListener('pointerup', onUp);
+    window.addEventListener('pointercancel', onUp);
   };
 
   const onClick = () => {

@@ -41,6 +41,7 @@ if (fs.existsSync(manifestFile)) {
     if (piece.closed) piece.closed = inline(piece.closed);
     if (piece.open) piece.open = inline(piece.open);
     if (piece.frames) piece.frames = piece.frames.map(inline).filter(Boolean);
+    if (piece.parts) piece.parts = piece.parts.map((part) => ({ ...part, src: inline(part.src) })).filter((part) => part.src);
   }
   artScript = `<script>window.__ROOMY_ART__=${JSON.stringify(m).replace(/<\//g, '<\\/')};</script>`;
   console.log('  inlined art/manifest.json');

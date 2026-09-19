@@ -194,11 +194,15 @@ function RoomInspector({ room }: { room: Room }) {
         ))}
       </div>
 
-      <h3>Demolition</h3>
-      <button className="btn btn-danger" onClick={() => app.removeRoom(room.id)}>
-        <Icon name="trash" size={16} /> Knock down this room
-      </button>
-      <p className="muted">Anything inside is carried out to the porch first.</p>
+      {!attic && (
+        <>
+          <h3>Demolition</h3>
+          <button className="btn btn-danger" onClick={() => app.removeRoom(room.id)}>
+            <Icon name="trash" size={16} /> Knock down this room
+          </button>
+          <p className="muted">Anything inside is carried out to the porch first.</p>
+        </>
+      )}
     </>
   );
 }

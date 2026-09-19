@@ -474,6 +474,24 @@ kbd {
   }
 }
 
+/* Hand-drawn art: one shared canvas, fitted inside the piece's box and standing on its bottom edge,
+   so layers line up with each other whatever shape the box is. */
+.furn {
+  container-type: size;
+}
+.furn-art {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+.furn-art[style*='--ar'] {
+  width: min(100cqw, calc(100cqh * var(--ar)));
+  height: min(100cqh, calc(100cqw / var(--ar)));
+}
 .furn-img {
   position: absolute;
   inset: 0;
@@ -483,6 +501,13 @@ kbd {
   object-position: 50% 100%;
   transition: opacity 0.3s ease;
   pointer-events: none;
+}
+.furn-part {
+  transition: transform 0.55s cubic-bezier(0.34, 1.3, 0.5, 1), opacity 0.4s ease;
+}
+.furn-art.is-open .fpart {
+  transform: var(--ot, none);
+  opacity: var(--oo, var(--co, 1));
 }
 .furn-frame {
   transition: none;
@@ -643,6 +668,7 @@ kbd {
   transform: translate(-50%, -100%);
   flex-wrap: wrap;
   justify-content: center;
+  width: max-content; /* or a tag near the edge of the screen shrinks and wraps */
   max-width: 230px;
   white-space: normal;
   opacity: 0.94;
@@ -2161,6 +2187,24 @@ kbd {
   box-shadow: var(--drop);
   font: 400 15px var(--hand);
 }
+.pill-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  border: 0;
+  background: none;
+  padding: 4px 2px;
+  font: inherit;
+  color: inherit;
+}
+.pill-label:hover span {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.pill-yard {
+  display: none;
+  gap: 8px;
+}
 .hint {
   font: 500 13px var(--ui);
   padding: 4px 6px 4px 16px;
@@ -2730,6 +2774,9 @@ body.is-dragging-file * {
   .pill {
     font-size: 14px;
     padding: 7px 10px;
+  }
+  .pill-yard {
+    display: inline-flex;
   }
   .hint {
     display: none;

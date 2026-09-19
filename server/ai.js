@@ -16,7 +16,7 @@ export async function complete(prompt) {
     },
     body: JSON.stringify({
       model: process.env.ANTHROPIC_MODEL || 'claude-haiku-4-5',
-      max_tokens: 4096,
+      max_tokens: 8192,
       messages: [{ role: 'user', content: prompt }],
     }),
     signal: AbortSignal.timeout(60_000),

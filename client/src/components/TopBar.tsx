@@ -14,10 +14,11 @@ export function TopBar({ night }: { night: boolean }) {
   const storeKind = useApp((s) => s.storeKind);
   const app = useApp.getState();
   const [menu, setMenu] = useState(false);
+  const [confirming, setConfirming] = useState<'samples' | 'empty' | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!menu) return;
+    if (!menu) return setConfirming(null);
     const close = (e: PointerEvent) => !menuRef.current?.contains(e.target as Node) && setMenu(false);
     window.addEventListener('pointerdown', close);
     return () => window.removeEventListener('pointerdown', close);
@@ -71,11 +72,12 @@ export function TopBar({ night }: { night: boolean }) {
                   <Icon name="clock" size={16} /> Follow my device theme
                 </button>
                 <hr />
-                <button role="menuitem" onClick={() => (setMenu(false), void app.resetDemo(true))}>
-                  <Icon name="reset" size={16} /> Reset the sample house
+                {/* both of these erase everything, so they ask twice (window.confirm is blocked in sandboxed pages) */}
+                <button role="menuitem" className={confirming === 'samples' ? 'is-danger' : ''} onClick={() => (confirming === 'samples' ? (setMenu(false), void app.resetDemo(true)) : setConfirming('samples'))}>
+                  <Icon name="reset" size={16} /> {confirming === 'samples' ? 'Erase everything and reset? Click again' : 'Reset the sample house'}
                 </button>
-                <button role="menuitem" onClick={() => (setMenu(false), void app.resetDemo(false))}>
-                  <Icon name="door" size={16} /> Start with an empty house
+                <button role="menuitem" className={confirming === 'empty' ? 'is-danger' : ''} onClick={() => (confirming === 'empty' ? (setMenu(false), void app.resetDemo(false)) : setConfirming('empty'))}>
+                  <Icon name="door" size={16} /> {confirming === 'empty' ? 'Erase everything? Click again' : 'Start with an empty house'}
                 </button>
               </div>
             )}

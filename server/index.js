@@ -32,6 +32,7 @@ const MAX_UPLOAD = Number(process.env.MAX_UPLOAD_MB ?? 250) * 1024 * 1024;
 const CLIENT_DIST = path.resolve(here, '../client/dist');
 
 const dirs = { blobs: path.join(DATA_DIR, 'blobs'), thumbs: path.join(DATA_DIR, 'thumbs'), art: path.join(DATA_DIR, 'art'), tmp: path.join(DATA_DIR, 'tmp') };
+fs.rmSync(dirs.tmp, { recursive: true, force: true }); // half-finished uploads from the last run
 for (const d of Object.values(dirs)) fs.mkdirSync(d, { recursive: true });
 
 const db = new Db(path.join(DATA_DIR, 'db.json'));
@@ -39,6 +40,18 @@ const upload = multer({ dest: dirs.tmp, limits: { fileSize: MAX_UPLOAD, files: 4
 const app = express();
 app.disable('x-powered-by');
 app.use(express.json({ limit: '4mb' }));
+
+// There is no login, so at least make sure a random web page cannot drive the API from the owner's browser.
+app.use('/api', (req, res, next) => {
+  const from = req.get('origin');
+  if (req.method === 'GET' || !from) return next();
+  try {
+    if (new URL(from).host === req.get('host')) return next();
+  } catch {
+    /* malformed Origin: refuse below */
+  }
+  res.status(403).json({ error: 'Requests from other sites are not allowed.' });
+});
 
 /* ---------- live sync (server-sent events) ---------- */
 
@@ -70,9 +83,20 @@ const KIND_BY_EXT = {
   mp3: 'audio', wav: 'audio', m4a: 'audio', mp4: 'video', mov: 'video', webm: 'video', zip: 'archive', tar: 'archive', gz: 'archive',
 };
 
+const MIME_BY_EXT = {
+  jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png', gif: 'image/gif', webp: 'image/webp', heic: 'image/heic', pdf: 'application/pdf',
+  md: 'text/markdown', txt: 'text/plain', csv: 'text/csv', json: 'application/json', mp3: 'audio/mpeg', wav: 'audio/wav', m4a: 'audio/mp4',
+  mp4: 'video/mp4', mov: 'video/quicktime', webm: 'video/webm', zip: 'application/zip',
+};
+/** Types a browser only ever displays. Anything else is served sandboxed so it can not script this origin. */
+const INERT = /^(image\/(png|jpeg|gif|webp|avif|bmp|heic)|audio\/|video\/|application\/pdf$|text\/(plain|markdown|csv)\b|application\/(json|zip)$)/i;
+
 const origin = (req) => `${req.protocol}://${req.get('host')}`;
 const token = (bytes = 9) => crypto.randomBytes(bytes).toString('base64url');
-const safeId = (id) => (typeof id === 'string' && /^[\w-]{1,80}$/.test(id) ? id : null);
+const safeId = (id) => (typeof id === 'string' && /^[\w-]{1,80}$/.test(id) && !/^(__proto__|constructor|prototype)$/.test(id) ? id : null);
+/** Own-property lookup, so an id like "__proto__" can never reach Object.prototype. */
+const own = (obj, key) => (typeof key === 'string' && Object.hasOwn(obj, key) ? obj[key] : undefined);
+const dropTemp = (req) => [req.file, ...(Array.isArray(req.files) ? req.files : [])].filter(Boolean).forEach((f) => fs.rm(f.path, { force: true }, () => {}));
 
 /** What the client sees: the record without server-only fields, plus a thumbnail URL. */
 function publicFile(rec) {
@@ -98,11 +122,12 @@ function sendStored(res, dir, name, mime, downloadName) {
   const file = path.join(dir, name);
   if (!fs.existsSync(file)) return res.status(404).json({ error: 'The contents of this file are missing.' });
   res.type(mime || 'application/octet-stream');
-  // never let an uploaded HTML or SVG file run scripts on this origin (PDFs are left alone so the browser's viewer can show them)
-  if (/html|xml|svg/i.test(mime ?? '')) res.set('Content-Security-Policy', "default-src 'none'; img-src 'self' data:; style-src 'unsafe-inline'; sandbox");
+  // Uploaded HTML, SVG, XML, XSL and friends must never run scripts on this origin. Allowlist, not denylist:
+  // only types a browser merely displays are served plain (PDF included, so the built-in viewer still works).
+  if (!INERT.test(mime ?? '')) res.set('Content-Security-Policy', "default-src 'none'; img-src 'self' data:; style-src 'unsafe-inline'; sandbox");
   res.set('X-Content-Type-Options', 'nosniff');
   if (downloadName) res.attachment(downloadName);
-  res.sendFile(file);
+  res.sendFile(name, { root: dir, dotfiles: 'allow' });
 }
 
 /* ---------- state ---------- */
@@ -126,17 +151,27 @@ app.put('/api/house', (req, res) => {
 
 app.post('/api/files', upload.single('file'), async (req, res) => {
   if (!req.file) return res.status(400).json({ error: 'No file was sent.' });
-  let meta;
+  let meta = {};
   try {
-    meta = JSON.parse(req.body.meta ?? '{}');
+    const parsed = JSON.parse(typeof req.body.meta === 'string' ? req.body.meta : '{}');
+    if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) meta = parsed;
   } catch {
-    meta = {};
+    /* no usable meta: store the file with defaults */
   }
-  const id = safeId(meta.id) && !db.data.files[meta.id] ? meta.id : `f-${token(8)}`;
+  const id = safeId(meta.id) && !own(db.data.files, meta.id) ? meta.id : `f-${token(8)}`;
   const blob = crypto.randomUUID();
   await fsp.rename(req.file.path, path.join(dirs.blobs, blob));
   const { thumb, thumbUrl: _ignored, ...rest } = meta;
+  const now = Date.now();
   const rec = {
+    // a file with no address would be invisible, so anything unplaced waits on the porch
+    roomId: 'yard',
+    furnitureId: 'yard-porch',
+    kind: 'other',
+    ext: '',
+    addedAt: now,
+    modifiedAt: now,
+    touchedAt: now,
     tags: [],
     pinned: false,
     ...rest,
@@ -156,9 +191,10 @@ app.post('/api/files', upload.single('file'), async (req, res) => {
 app.patch('/api/files', (req, res) => {
   const patches = Array.isArray(req.body?.patches) ? req.body.patches : [];
   let n = 0;
-  for (const { id, patch } of patches) {
-    const rec = db.data.files[id];
-    if (!rec || !patch || typeof patch !== 'object') continue;
+  for (const entry of patches) {
+    const { id, patch } = entry ?? {};
+    const rec = own(db.data.files, id);
+    if (!rec || !patch || typeof patch !== 'object' || Array.isArray(patch)) continue;
     for (const [k, v] of Object.entries(patch)) {
       if (!PATCHABLE.has(k)) continue;
       if (v === null || v === undefined) delete rec[k];
@@ -175,7 +211,7 @@ app.patch('/api/files', (req, res) => {
 });
 
 app.delete('/api/files/:id', async (req, res) => {
-  const rec = db.data.files[req.params.id];
+  const rec = own(db.data.files, req.params.id);
   if (!rec) return res.json({ ok: true });
   delete db.data.files[rec.id];
   for (const [t, fid] of Object.entries(db.data.shares)) if (fid === rec.id) delete db.data.shares[t];
@@ -186,13 +222,13 @@ app.delete('/api/files/:id', async (req, res) => {
 });
 
 app.get('/api/files/:id/content', (req, res) => {
-  const rec = db.data.files[req.params.id];
+  const rec = own(db.data.files, req.params.id);
   if (!rec) return res.status(404).json({ error: 'No such file.' });
   sendStored(res, dirs.blobs, rec._blob, rec.mime, req.query.download ? rec.name : undefined);
 });
 
 app.get('/api/files/:id/thumb', (req, res) => {
-  const rec = db.data.files[req.params.id];
+  const rec = own(db.data.files, req.params.id);
   if (!rec?._thumb) return res.status(404).end();
   res.set('Cache-Control', 'private, max-age=86400');
   sendStored(res, dirs.thumbs, rec._thumb, 'image/jpeg');
@@ -201,9 +237,9 @@ app.get('/api/files/:id/thumb', (req, res) => {
 /* ---------- share links ---------- */
 
 app.post('/api/files/:id/share', (req, res) => {
-  const rec = db.data.files[req.params.id];
+  const rec = own(db.data.files, req.params.id);
   if (!rec) return res.status(404).json({ error: 'No such file.' });
-  const t = rec.shared?.token && db.data.shares[rec.shared.token] === rec.id ? rec.shared.token : token(12);
+  const t = rec.shared?.token && own(db.data.shares, rec.shared.token) === rec.id ? rec.shared.token : token(12);
   db.data.shares[t] = rec.id;
   rec.shared = { token: t, at: Date.now(), url: `${origin(req)}/share/${t}` };
   db.save();
@@ -212,7 +248,7 @@ app.post('/api/files/:id/share', (req, res) => {
 });
 
 app.delete('/api/files/:id/share', (req, res) => {
-  const rec = db.data.files[req.params.id];
+  const rec = own(db.data.files, req.params.id);
   if (rec?.shared) {
     delete db.data.shares[rec.shared.token];
     delete rec.shared;
@@ -223,7 +259,7 @@ app.delete('/api/files/:id/share', (req, res) => {
 });
 
 function sharedFile(req) {
-  const rec = db.data.files[db.data.shares[req.params.token]];
+  const rec = own(db.data.files, own(db.data.shares, req.params.token));
   return rec && !rec.trashed ? rec : null;
 }
 
@@ -254,9 +290,11 @@ app.get('/drop/:token', (req, res) => {
   res.status(ok ? 200 : 404).type('html').send(dropPage(ok ? { house: db.data.house?.name ?? 'this house', token: req.params.token } : null));
 });
 
-app.post('/drop/:token', upload.array('files', 20), async (req, res) => {
-  if (req.params.token !== db.data.dropToken) return res.status(404).json({ error: 'This drop link is no longer active.' });
-  const from = String(req.body.from ?? '').trim().slice(0, 40);
+const dropIsOpen = (req, res, next) => (db.data.dropToken && req.params.token === db.data.dropToken ? next() : res.status(404).json({ error: 'This drop link is no longer active.' }));
+
+// the token is checked BEFORE multer touches the body, so strangers can not fill the disk through a dead link
+app.post('/drop/:token', dropIsOpen, upload.array('files', 20), async (req, res) => {
+  const from = typeof req.body?.from === 'string' ? req.body.from.trim().slice(0, 40) : '';
   const now = Date.now();
   const added = [];
   for (const f of req.files ?? []) {
@@ -266,7 +304,8 @@ app.post('/drop/:token', upload.array('files', 20), async (req, res) => {
     const blob = crypto.randomUUID();
     await fsp.rename(f.path, path.join(dirs.blobs, blob));
     db.data.files[id] = {
-      id, name, ext, mime: f.mimetype, size: f.size, kind: KIND_BY_EXT[ext] ?? (f.mimetype.startsWith('image/') ? 'image' : 'other'),
+      // never trust the sender's Content-Type: the type comes from the extension, or it is an opaque download
+      id, name, ext, mime: own(MIME_BY_EXT, ext) ?? 'application/octet-stream', size: f.size, kind: own(KIND_BY_EXT, ext) ?? 'other',
       roomId: 'yard', furnitureId: 'yard-mailbox', addedAt: now, modifiedAt: now, touchedAt: now, pinned: false,
       tags: from ? [`from ${from}`] : ['shared with me'], reason: from ? `Sent by ${from}` : 'Dropped into your mailbox', _blob: blob, _thumb: null,
     };
@@ -293,7 +332,7 @@ app.post('/api/art', upload.single('file'), async (req, res) => {
 });
 
 app.get('/api/art/:id', (req, res) => {
-  const meta = db.data.art[req.params.id];
+  const meta = own(db.data.art, req.params.id);
   if (!meta) return res.status(404).end();
   res.set('Cache-Control', 'private, max-age=31536000, immutable');
   sendStored(res, dirs.art, req.params.id, meta.mime);
@@ -331,18 +370,36 @@ if (fs.existsSync(path.join(CLIENT_DIST, 'index.html'))) {
   app.get(/^\/(?!api\/|share\/|drop\/).*/, (_req, res) => res.sendFile(path.join(CLIENT_DIST, 'index.html')));
 }
 
-app.use((err, _req, res, _next) => {
+app.use((err, req, res, _next) => {
+  dropTemp(req);
   const tooBig = err?.code === 'LIMIT_FILE_SIZE';
-  res.status(tooBig ? 413 : 500).json({ error: tooBig ? `That file is over the ${process.env.MAX_UPLOAD_MB ?? 250} MB limit.` : 'Something went wrong on the server.' });
-  if (!tooBig) console.error(err);
+  const status = tooBig ? 413 : err instanceof multer.MulterError ? 400 : Number(err?.status ?? err?.statusCode) || 500;
+  const message = tooBig
+    ? `That file is over the ${process.env.MAX_UPLOAD_MB ?? 250} MB limit.`
+    : status === 400 ? 'That request could not be read.' : status === 413 ? 'That request is too large.' : 'Something went wrong on the server.';
+  if (status >= 500) console.error(err);
+  if (!res.headersSent) res.status(status).json({ error: message });
 });
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, (err) => {
+  if (err) {
+    console.error(err.code === 'EADDRINUSE' ? `Port ${PORT} is already in use. Is another Roomy server running? Stop it, or set PORT to something else.` : err.message);
+    process.exit(1);
+  }
   console.log(`Roomy server on http://localhost:${PORT}`);
   console.log(`  data: ${DATA_DIR}`);
   console.log(`  sorting: ${hasAi() ? 'Claude' : 'built-in rules (set ANTHROPIC_API_KEY to use Claude)'}`);
   if (!fs.existsSync(path.join(CLIENT_DIST, 'index.html'))) console.log('  client: not built yet. Run "npm run dev" from the repo root, or "npm run build" first.');
 });
+
+// write what is pending before we go, so an acknowledged upload is never forgotten
+for (const signal of ['SIGINT', 'SIGTERM']) {
+  process.on(signal, () => {
+    db.flushNow();
+    server.close(() => process.exit(0));
+    setTimeout(() => process.exit(0), 500).unref();
+  });
+}
 
 /** Minimal .env reader so there is one less dependency. */
 function loadDotEnv(file) {

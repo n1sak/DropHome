@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import { PORCH_ID } from '../model/types';
+import { BINS_ID, MAILBOX_ID, PORCH_ID, YARD_ID } from '../model/types';
 import { useApp } from '../store/store';
 import { Icon } from './Icon';
 
@@ -50,8 +50,10 @@ export function BottomBar() {
         </div>
       )}
       <div className="pill">
-        <Icon name="box" />
-        <span>{waiting ? `${waiting} ${waiting === 1 ? 'box' : 'boxes'} on the porch` : 'The porch is clear'}</span>
+        <button className="pill-label" onClick={() => app.openFurniture(YARD_ID, PORCH_ID)} aria-label="Open the porch">
+          <Icon name="box" />
+          <span>{waiting ? `${waiting} ${waiting === 1 ? 'box' : 'boxes'} on the porch` : 'The porch is clear'}</span>
+        </button>
         {waiting > 0 && (
           <button className="btn btn-primary" onClick={() => void app.unpack(PORCH_ID)}>
             <Icon name="sparkle" size={16} /> Unpack{brain === 'rules' ? '' : ' with Claude'}
@@ -60,6 +62,14 @@ export function BottomBar() {
         <button className="btn" onClick={() => input.current?.click()}>
           <Icon name="upload" size={16} /> Bring in files
         </button>
+        <span className="pill-yard">
+          <button className="icon-btn" onClick={() => app.openFurniture(YARD_ID, MAILBOX_ID)} aria-label="Open the mailbox">
+            <Icon name="mail" size={17} />
+          </button>
+          <button className="icon-btn" onClick={() => app.openFurniture(YARD_ID, BINS_ID)} aria-label="Open the bins">
+            <Icon name="trash" size={17} />
+          </button>
+        </span>
         <input
           id="bring-in-files"
           ref={input}

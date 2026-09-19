@@ -66,7 +66,7 @@ export function useManifest(): ArtManifest {
 }
 
 export function artFor(m: ArtManifest, room: Room | null, f: Furniture): CustomArt | undefined {
-  if (f.art && (f.art.closed || f.art.open || f.art.frames?.length || f.art.baked)) return f.art;
+  if (f.art && (f.art.closed || f.art.open || f.art.frames?.length || f.art.parts?.length || f.art.baked)) return f.art;
   const fromManifest = m.furniture?.[f.id] ?? m.furniture?.[f.kind];
   if (fromManifest) return fromManifest;
   if (room && !room.background && (m.rooms?.[room.id] ?? m.rooms?.[room.kind])?.bakedFurniture) return { baked: true };
@@ -103,4 +103,64 @@ export function useArtUrl(ref: string | undefined): string | undefined {
     };
   }, [ref]);
   return url;
+}
+
+export interface Box {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+}
+
+const boxes = new Map<string, Box>();
+const FULL: Box = { x: 0, y: 0, w: 100, h: 100 };
+
+/**
+ * The outline of what is actually drawn on a transparent layer, in % of its canvas.
+ * This is how "swing-left" finds the hinge on a layer that was exported at full canvas size.
+ */
+export function useInkBox(url: string | undefined): Box {
+  const [box, setBox] = useState<Box>(() => (url && boxes.get(url)) || FULL);
+  useEffect(() => {
+    if (!url) return;
+    const known = boxes.get(url);
+    if (known) return setBox(known);
+    let alive = true;
+    const img = new Image();
+    img.onload = () => {
+      let found = FULL;
+      try {
+        const k = Math.min(1, 200 / Math.max(img.naturalWidth, img.naturalHeight, 1));
+        const w = Math.max(1, Math.round(img.naturalWidth * k));
+        const h = Math.max(1, Math.round(img.naturalHeight * k));
+        const canvas = document.createElement('canvas');
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext('2d', { willReadFrequently: true });
+        if (ctx) {
+          ctx.drawImage(img, 0, 0, w, h);
+          const px = ctx.getImageData(0, 0, w, h).data;
+          let x0 = w, y0 = h, x1 = -1, y1 = -1;
+          for (let y = 0; y < h; y++)
+            for (let x = 0; x < w; x++)
+              if (px[(y * w + x) * 4 + 3] > 12) {
+                if (x < x0) x0 = x;
+                if (x > x1) x1 = x;
+                if (y < y0) y0 = y;
+                if (y > y1) y1 = y;
+              }
+          if (x1 >= x0 && y1 >= y0) found = { x: (x0 / w) * 100, y: (y0 / h) * 100, w: ((x1 - x0 + 1) / w) * 100, h: ((y1 - y0 + 1) / h) * 100 };
+        }
+      } catch {
+        /* a tainted canvas: fall back to the whole layer */
+      }
+      boxes.set(url, found);
+      if (alive) setBox(found);
+    };
+    img.src = url;
+    return () => {
+      alive = false;
+    };
+  }, [url]);
+  return box;
 }

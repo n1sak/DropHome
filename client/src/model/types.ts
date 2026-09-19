@@ -97,6 +97,26 @@ export type FurnitureKind =
   | 'mailbox'
   | 'bins';
 
+/** One separately drawn layer of a piece that moves when it opens: a door, a drawer front, a lid. */
+export interface ArtPart {
+  src: string;
+  /** Where the layer sits, in % of the piece's canvas. Leave out for a layer exported at the full canvas size. */
+  x?: number;
+  y?: number;
+  w?: number;
+  h?: number;
+  /** A ready-made movement. The hinge or edge is found from the drawing's own outline. */
+  motion?: 'swing-left' | 'swing-right' | 'slide-down' | 'slide-up' | 'lift' | 'pop' | 'rise' | 'fade-in' | 'fade-out';
+  /** Or write the CSS transforms yourself. These win over `motion`. */
+  open?: string;
+  closed?: string;
+  origin?: string;
+  /** Milliseconds to wait before this layer starts moving. */
+  delay?: number;
+  /** Draw under the base drawing: for things that peek out from behind it. */
+  behind?: boolean;
+}
+
 export interface CustomArt {
   /** Asset id (stored through the storage adapter) or URL, drawn when closed. */
   closed?: string;
@@ -105,6 +125,8 @@ export interface CustomArt {
   /** Optional flipbook, closed -> open. Played forwards on open, backwards on close. */
   frames?: string[];
   fps?: number;
+  /** Optional moving layers, drawn over (or behind) the base drawing. */
+  parts?: ArtPart[];
   /** The room background already contains this piece; keep the hotspot, draw nothing. */
   baked?: boolean;
   /** Where live content sits on the art (TV picture, framed photos, fridge notes), in % of the piece. */
@@ -194,7 +216,7 @@ export interface FileItem {
 
   pinned: boolean;
   /** Set when it is in the bins. Holds where it came from so it can be put back. */
-  trashed?: { at: number; roomId: string; furnitureId: string };
+  trashed?: { at: number; roomId: string; furnitureId: string; pinned?: boolean };
   shared?: { token: string; at: number; url?: string };
 
   tags: string[];

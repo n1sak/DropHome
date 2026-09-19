@@ -165,7 +165,8 @@ function Viewer({ file }: { file: FileItem }) {
   const textual = isTextual(file.kind, file.ext, file.mime);
   // inline PDFs need the browser's own viewer, which sandboxed pages and a few browsers do not have
   const canShowPdf = !__ARTIFACT__ && (navigator as Navigator & { pdfViewerEnabled?: boolean }).pdfViewerEnabled !== false;
-  const needsUrl = file.kind === 'image' || file.kind === 'audio' || file.kind === 'video' || (file.kind === 'pdf' && canShowPdf);
+  const isPdf = file.kind === 'pdf' && file.mime === 'application/pdf'; // a ".pdf" that is really something else never gets a frame
+  const needsUrl = file.kind === 'image' || file.kind === 'audio' || file.kind === 'video' || (isPdf && canShowPdf);
   const url = useFileUrl(needsUrl ? file : null);
   const text = useFileText(file, textual);
 
@@ -180,7 +181,7 @@ function Viewer({ file }: { file: FileItem }) {
         {url ? <audio src={url} controls /> : <p className="muted">Loading the recording…</p>}
       </div>
     );
-  if (file.kind === 'pdf' && url) return <iframe className="view-frame" src={url} title={file.name} />;
+  if (isPdf && url) return <iframe className="view-frame" src={url} title={file.name} />;
   if (textual) {
     if (text === null) return <Loading file={file} />;
     if (file.ext === 'csv' || file.ext === 'tsv') return <CsvTable text={text} sep={file.ext === 'tsv' ? '\t' : ','} />;

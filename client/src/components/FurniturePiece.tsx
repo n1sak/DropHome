@@ -1,10 +1,10 @@
-import { memo, useEffect, useMemo, useRef, useState, type CSSProperties, type PointerEvent as RPointerEvent } from 'react';
-import { artFor, useArtUrl, useManifest } from '../art/customArt';
+import { memo, useEffect, useMemo, useRef, useState, type CSSProperties, type PointerEvent as RPointerEvent, type ReactNode } from 'react';
+import { artFor, useArtUrl, useInkBox, useManifest, type Box } from '../art/customArt';
 import { drawFurniture, type Slot } from '../art/furnitureArt';
 import { FurnitureSvg } from '../art/Sketch';
 import { hashSeed } from '../art/sketch';
 import type { Rect } from '../model/layout';
-import { YARD_ID, type CustomArt, type FileItem, type Furniture, type Room } from '../model/types';
+import { YARD_ID, type ArtPart, type CustomArt, type FileItem, type Furniture, type Room } from '../model/types';
 import { useApp } from '../store/store';
 import { FileObject } from './FileObject';
 import { useStage } from './StageContext';
@@ -31,6 +31,7 @@ export const FurniturePiece = memo(function FurniturePiece({ room, f, rect, live
   const updateFurniture = useApp((s) => s.updateFurniture);
   const { cam } = useStage();
   const moved = useRef(false);
+  const [hovered, setHovered] = useState(false);
 
   const sketch = useMemo(
     () => (custom ? null : drawFurniture(f.kind, { w: rect.w, h: rect.h, seed: hashSeed(f.id), count: contents.length })),
@@ -52,7 +53,7 @@ export const FurniturePiece = memo(function FurniturePiece({ room, f, rect, live
 
   /* Renovate mode: drag to move, corner handle to resize. Positions are % of the room. */
   const startDrag = (e: RPointerEvent, mode: 'move' | 'size') => {
-    if (!editable || !room) return;
+    if (!editable || !room || e.button !== 0) return;
     e.stopPropagation();
     e.preventDefault();
     selectFurniture(f.id);
@@ -79,11 +80,15 @@ export const FurniturePiece = memo(function FurniturePiece({ room, f, rect, live
     const onUp = () => {
       window.removeEventListener('pointermove', onMove);
       window.removeEventListener('pointerup', onUp);
+      window.removeEventListener('pointercancel', onUp);
       setTimeout(() => (moved.current = false), 0);
     };
     window.addEventListener('pointermove', onMove);
     window.addEventListener('pointerup', onUp);
+    window.addEventListener('pointercancel', onUp);
   };
+
+  const slotLayer = slots.length > 0 ? <SlotLayer f={f} slots={slots} w={rect.w} h={rect.h} contents={contents} open={open} /> : null;
 
   const style: CSSProperties = room
     ? { left: `${f.x}%`, top: `${f.y}%`, width: `${f.w}%`, height: `${f.h}%` }
@@ -98,20 +103,35 @@ export const FurniturePiece = memo(function FurniturePiece({ room, f, rect, live
       data-drop-room={room ? room.id : YARD_ID}
       onClick={onClick}
       onPointerDown={editable ? (e) => startDrag(e, 'move') : undefined}
+      onPointerEnter={custom ? () => setHovered(true) : undefined}
+      onPointerLeave={custom ? () => setHovered(false) : undefined}
     >
-      {custom ? <CustomArtView art={custom} open={open} /> : sketch && <FurnitureSvg w={rect.w} h={rect.h} art={sketch} />}
-      {slots.length > 0 && <SlotLayer f={f} slots={slots} w={rect.w} h={rect.h} contents={contents} open={open} />}
+      {custom ? (
+        // slots go inside the art's own canvas, so the TV picture stays on the drawn screen whatever shape the box is
+        <CustomArtView art={custom} open={open || (hovered && live && !editable)}>
+          {slotLayer}
+        </CustomArtView>
+      ) : (
+        <>
+          {sketch && <FurnitureSvg w={rect.w} h={rect.h} art={sketch} />}
+          {slotLayer}
+        </>
+      )}
       {editable && selected && <span className="furn-handle" onPointerDown={(e) => startDrag(e, 'size')} />}
     </div>
   );
 });
 
-/** Hand-drawn art for a piece: a closed and an open drawing, or a flipbook between them. */
-function CustomArtView({ art, open }: { art: CustomArt; open: boolean }) {
+/**
+ * Hand-drawn art for a piece. Any mix of: a closed and an open drawing (cross-fade), a flipbook of
+ * frames between them, and separately drawn layers that swing, slide or lift when the piece opens.
+ */
+function CustomArtView({ art, open, children }: { art: CustomArt; open: boolean; children?: ReactNode }) {
   const frames = art.frames?.length ? art.frames : null;
   const closedUrl = useArtUrl(art.closed ?? art.open);
   const openUrl = useArtUrl(art.open ?? art.closed);
   const [frame, setFrame] = useState(open && frames ? frames.length - 1 : 0);
+  const [ratio, setRatio] = useState<number | null>(null);
 
   useEffect(() => {
     if (!frames) return;
@@ -130,30 +150,96 @@ function CustomArtView({ art, open }: { art: CustomArt; open: boolean }) {
     return () => clearInterval(timer);
   }, [open, frames, art.fps]);
 
+  // every layer shares one canvas, sized like the first drawing that loads, so percentages always line up
+  const measure = (e: { currentTarget: HTMLImageElement }) => {
+    const { naturalWidth: w, naturalHeight: h } = e.currentTarget;
+    if (!ratio && w && h) setRatio(w / h);
+  };
+
   // part of the room backdrop: nothing to draw while closed, but an "open" drawing can still appear over it
-  if (art.baked) return art.open && openUrl ? <img className={`furn-img${open ? '' : ' is-hidden'}`} src={openUrl} alt="" draggable={false} /> : null;
-  if (frames) return <FlipFrames frames={frames} index={frame} />;
-  return (
+  const base = art.baked ? (
+    art.open && openUrl ? <img className={`furn-img${open ? '' : ' is-hidden'}`} src={openUrl} alt="" draggable={false} onLoad={measure} /> : null
+  ) : frames ? (
+    <FlipFrames frames={frames} index={frame} onLoad={measure} />
+  ) : (
     <>
-      {closedUrl && <img className={`furn-img${open && openUrl !== closedUrl ? ' is-hidden' : ''}`} src={closedUrl} alt="" draggable={false} />}
+      {closedUrl && <img className={`furn-img${open && openUrl !== closedUrl ? ' is-hidden' : ''}`} src={closedUrl} alt="" draggable={false} onLoad={measure} />}
       {openUrl && openUrl !== closedUrl && <img className={`furn-img${open ? '' : ' is-hidden'}`} src={openUrl} alt="" draggable={false} />}
     </>
   );
+
+  const parts = art.parts ?? [];
+  return (
+    <div className={`furn-art${open ? ' is-open' : ''}`} style={ratio ? ({ '--ar': ratio } as CSSProperties) : undefined}>
+      {parts.filter((p) => p.behind).map((p, i) => <PartLayer key={`b${i}`} part={p} onLoad={measure} />)}
+      {base}
+      {parts.filter((p) => !p.behind).map((p, i) => <PartLayer key={`f${i}`} part={p} onLoad={measure} />)}
+      {children}
+    </div>
+  );
 }
 
-function FlipFrames({ frames, index }: { frames: string[]; index: number }) {
+/** Ready-made movements, worked out from where the ink actually is on the layer. */
+function motionFor(part: ArtPart, b: Box): { closed?: string; open?: string; origin?: string; co?: number; oo?: number } {
+  const cx = b.x + b.w / 2;
+  const cy = b.y + b.h / 2;
+  switch (part.motion) {
+    case 'swing-left':
+      return { open: 'scaleX(0.13) skewY(-7deg)', origin: `${b.x}% ${cy}%` };
+    case 'swing-right':
+      return { open: 'scaleX(0.13) skewY(7deg)', origin: `${b.x + b.w}% ${cy}%` };
+    case 'slide-down':
+      return { open: `translateY(${(b.h * 0.45).toFixed(1)}%) scale(1.04)`, origin: `${cx}% ${b.y}%` };
+    case 'slide-up':
+      return { open: `translateY(-${(b.h * 0.45).toFixed(1)}%)`, origin: `${cx}% ${cy}%` };
+    case 'lift':
+      return { open: `translateY(-${(b.h * 0.6).toFixed(1)}%) rotate(-7deg)`, origin: `${b.x}% ${b.y + b.h}%` };
+    case 'pop':
+      return { open: `translateY(-${(b.h * 0.12).toFixed(1)}%) rotate(-4deg)`, origin: `${cx}% ${b.y + b.h}%` };
+    case 'rise':
+      return { closed: `translateY(${(b.h * 0.3).toFixed(1)}%)`, open: `translateY(-${(b.h * 0.12).toFixed(1)}%)`, origin: `${cx}% ${cy}%` };
+    case 'fade-in':
+      return { co: 0, oo: 1 };
+    case 'fade-out':
+      return { co: 1, oo: 0 };
+    default:
+      return {};
+  }
+}
+
+function PartLayer({ part, onLoad }: { part: ArtPart; onLoad: (e: { currentTarget: HTMLImageElement }) => void }) {
+  const url = useArtUrl(part.src);
+  const placed = part.w !== undefined && part.h !== undefined;
+  const ink = useInkBox(placed ? undefined : url); // a placed layer is its own box; a full-canvas one is measured
+  if (!url) return null;
+  const m = motionFor(part, placed ? { x: 0, y: 0, w: 100, h: 100 } : ink);
+  const style: Record<string, string | number> = placed ? { left: `${part.x ?? 0}%`, top: `${part.y ?? 0}%`, width: `${part.w}%`, height: `${part.h}%` } : {};
+  const closed = part.closed ?? m.closed;
+  const opened = part.open ?? m.open;
+  if (closed) style['--ct'] = closed;
+  if (opened) style['--ot'] = opened;
+  if (m.co !== undefined) style['--co'] = m.co;
+  if (m.oo !== undefined) style['--oo'] = m.oo;
+  style.transformOrigin = part.origin ?? m.origin ?? '50% 50%';
+  if (part.delay) style.transitionDelay = `${part.delay}ms`;
+  return <img className="furn-img furn-part fpart" src={url} alt="" draggable={false} style={style as CSSProperties} onLoad={placed ? undefined : onLoad} />;
+}
+
+type OnLoad = (e: { currentTarget: HTMLImageElement }) => void;
+
+function FlipFrames({ frames, index, onLoad }: { frames: string[]; index: number; onLoad: OnLoad }) {
   return (
     <>
       {frames.map((ref, i) => (
-        <FlipFrame key={ref + i} src={ref} shown={i === index} />
+        <FlipFrame key={ref + i} src={ref} shown={i === index} onLoad={i === 0 ? onLoad : undefined} />
       ))}
     </>
   );
 }
 
-function FlipFrame({ src, shown }: { src: string; shown: boolean }) {
+function FlipFrame({ src, shown, onLoad }: { src: string; shown: boolean; onLoad?: OnLoad }) {
   const url = useArtUrl(src);
-  return url ? <img className={`furn-img furn-frame${shown ? '' : ' is-hidden'}`} src={url} alt="" draggable={false} /> : null;
+  return url ? <img className={`furn-img furn-frame${shown ? '' : ' is-hidden'}`} src={url} alt="" draggable={false} onLoad={onLoad} /> : null;
 }
 
 /** Live content laid over the art: the TV picture, photos in their frames, notes on the fridge. */

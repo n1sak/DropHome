@@ -36,7 +36,27 @@ If you move or resize a piece in Renovate mode, its rectangle changes and the ar
 
 ### Animation
 
-Two drawings give you a quick cross-fade between closed and open. For real hand-drawn animation, give a piece a **flipbook** instead: three to six frames on the same canvas, first frame closed, last frame open. Roomy plays them forward when the piece opens and backward when it closes, at 10 frames a second unless you say otherwise. Animating on twos like this suits the drawn look better than a smooth tween would.
+There are three ways to make a piece move, and you can mix them on one piece.
+
+**Two drawings.** Closed and open, on the same canvas. Roomy cross-fades between them. The least drawing for a result that already reads well.
+
+**Moving layers.** Draw the part that moves on its own layer: the closet doors, the drawer front, the trunk lid, the fridge door. Draw what is behind it on the base layer (the inside of the closet). Export every layer at the **full canvas size**, which is what Procreate and Photoshop do by default, and name a movement for each one. Roomy finds the outline of the ink on the layer by itself, so a door swings around its own hinge edge without you measuring anything.
+
+| `motion` | What it does | Good for |
+|---|---|---|
+| `swing-left`, `swing-right` | Swings away around its left or right edge | Closet, wardrobe, fridge and cabinet doors |
+| `slide-down` | Slides toward you and grows a touch | Drawer fronts |
+| `slide-up` | Slides straight up | Roller doors, blinds |
+| `lift` | Lifts up and tips back | Trunk and chest lids, toolbox lids |
+| `pop` | A small hop and tilt | Things sitting on a surface: a paper stack, a robot, a duck |
+| `rise` | Hidden low, rises into view. Use with `"behind": true` | Papers peeking out of an open drawer or trunk |
+| `fade-in`, `fade-out` | Appears or disappears | Lamp light, a glow, a screen turning on |
+
+If a ready-made movement is not right, give the layer your own `open` (and optionally `closed`) CSS transform and an `origin`, for example `"open": "rotate(-35deg)", "origin": "12% 90%"`. Everything eases with a slight overshoot, the same as the placeholder furniture, and `delay` (milliseconds) staggers layers so two doors do not move in lockstep.
+
+**A flipbook.** For real hand-drawn animation: three to six frames on the same canvas, first frame closed, last frame open. Roomy plays them forward when the piece opens and backward when it closes, at 10 frames a second unless you say otherwise. Animating on twos like this suits the drawn look better than a smooth tween would. The frames have to be yours: Roomy can move and blend your drawings, but it does not invent in-between drawings in your style.
+
+Hovering a piece plays its animation, and so does opening it, exactly like the placeholder furniture.
 
 ### Live content on top of your art
 
@@ -86,7 +106,15 @@ The shell (roof, outer walls, yard, tree, ground) can be one picture too: `shell
         { "x": 78, "y": 20, "w": 20, "h": 50, "rot": 2 }
       ]
     },
-    "kitchen-fridge": { "baked": true, "open": "furniture/fridge-open.png" }
+    "kitchen-fridge": { "baked": true, "open": "furniture/fridge-open.png" },
+    "bedroom-wardrobe": {
+      "closed": "furniture/wardrobe-body.png",
+      "parts": [
+        { "src": "furniture/wardrobe-clothes.png", "motion": "rise", "behind": true },
+        { "src": "furniture/wardrobe-door-left.png", "motion": "swing-left" },
+        { "src": "furniture/wardrobe-door-right.png", "motion": "swing-right", "delay": 80 }
+      ]
+    }
   }
 }
 ```
@@ -97,6 +125,7 @@ The shell (roof, outer walls, yard, tree, ground) can be one picture too: `shell
 | `rooms.<key>.bakedFurniture` | The backdrop already contains the furniture: keep hotspots, draw nothing |
 | `furniture.<key>.closed` / `open` | The two states. With only one, it is used for both |
 | `furniture.<key>.frames`, `fps` | A flipbook from closed to open. Replaces `closed` and `open` |
+| `furniture.<key>.parts[]` | Moving layers over the base: `src`, `motion`, and optionally `open`, `closed`, `origin`, `delay`, `behind`. Give `x`, `y`, `w`, `h` (percent of the canvas) only if a layer was cropped instead of exported at full canvas size |
 | `furniture.<key>.baked` | This one piece is part of the backdrop |
 | `furniture.<key>.slots` | Where live content sits, in percent of the piece. `shape` is `rect`, `oval` or `screen` |
 | `shell` | The whole lot behind the rooms |

@@ -6,7 +6,14 @@
   "furniture": {
     "desk": { "closed": "furniture/desk-closed.png", "open": "furniture/desk-open.png" },
     "study-closet": {
-      "frames": ["furniture/closet-1.png", "furniture/closet-2.png", "furniture/closet-3.png"],
+      "closed": "furniture/closet-body.png",
+      "parts": [
+        { "src": "furniture/closet-door-left.png", "motion": "swing-left" },
+        { "src": "furniture/closet-door-right.png", "motion": "swing-right", "delay": 80 }
+      ]
+    },
+    "attic-trunk": {
+      "frames": ["furniture/trunk-1.png", "furniture/trunk-2.png", "furniture/trunk-3.png", "furniture/trunk-4.png"],
       "fps": 10
     },
     "tv": {

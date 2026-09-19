@@ -49,12 +49,18 @@ export function SearchBox() {
     flyToFile(id);
   };
 
+  const latest = useRef(q);
+  latest.current = q;
+
   const runAsk = async () => {
-    if (!q.trim() || asking) return;
+    const asked = q.trim();
+    if (!asked || asking) return;
     setAsking(true);
     setAnswer(null);
     try {
-      setAnswer(await ask(q.trim()));
+      const found = await ask(asked);
+      if (latest.current.trim() !== asked) return; // they kept typing: this answers an old question
+      setAnswer(found);
       setCursor(0);
     } finally {
       setAsking(false);
