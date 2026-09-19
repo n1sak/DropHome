@@ -17,7 +17,7 @@ Folders have been around for decades, and nobody remembers what they put in them
 | **The house notices** | Files gather dust the longer you leave them. A room's lights are on when you used it in the last two weeks. Spring cleaning boxes up anything untouched for a year and carries it to the attic, and bins exact duplicates. |
 | **Live walls** | Pin a photo and it shows up in a frame on the living room wall and plays on the TV. Pin a grocery list and it goes on the fridge door. The hall shows what you touched last and everything you have shared. |
 | **Renovate** | Flip the house into a blueprint and design your own: add floors, build rooms from templates, drag furniture around, rename anything, change what a piece *means*. The sorter reads your room descriptions, so a custom house sorts correctly. |
-| **Your art, not mine** | Every room and piece of furniture is a placeholder sketch behind a small art manifest. Drop in hand-drawn rooms, closed and open furniture, or flipbook frames, and nothing else changes. See [docs/ART_GUIDE.md](docs/ART_GUIDE.md). |
+| **Your art, not mine** | Every room and piece of furniture is a placeholder sketch behind a small art manifest. Drop in hand-drawn rooms, furniture drawn closed and open, separately drawn doors and drawers that swing and slide on their own hinges, or flipbook frames, and nothing else changes. See [docs/ART_GUIDE.md](docs/ART_GUIDE.md). |
 | **The Dropbox basics** | Storage on a server, live sync between open windows, share links, a drop link so other people can put files in your mailbox, and bins that keep things for 30 days. |
 
 ![Inside the study, desk open](docs/screenshots/desk.png)
@@ -74,7 +74,7 @@ client/                     React + Vite + TypeScript
   src/art/                  placeholder art, drawn in code with rough.js
     furnitureArt.ts         39 pieces, each a list of parts that animate open
     roomArt.ts, lotArt.ts   room backdrops, the house shell and the yard
-    customArt.ts            where hand-drawn art plugs in
+    customArt.ts            where hand-drawn art plugs in (backdrops, states, moving layers, flipbooks)
   src/ai/                   the sorter: Claude first, rules as the safety net
   src/storage/              server API, IndexedDB, or memory, behind one interface
   src/store/                app state (zustand) and the camera
