@@ -160,10 +160,10 @@ function RoomInspector({ room }: { room: Room }) {
             )}
           </div>
           <div className="btn-row">
-            <button className="btn" disabled={!canWiden} onClick={() => app.updateRoom(room.id, { span: room.span + 1 })}>
+            <button className="btn" disabled={!canWiden} onClick={() => app.setRoomSpan(room.id, room.span + 1)}>
               <Icon name="width" size={16} /> Wider
             </button>
-            <button className="btn" disabled={room.span <= 1} onClick={() => app.updateRoom(room.id, { span: room.span - 1 })}>
+            <button className="btn" disabled={room.span <= 1} onClick={() => app.setRoomSpan(room.id, room.span - 1)}>
               Narrower
             </button>
           </div>

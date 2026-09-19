@@ -18,16 +18,29 @@ export interface ArtManifest {
   format: 'roomy.art/1';
   /** Whole-lot backdrop drawn behind the rooms (house shell, roof, yard). */
   shell?: string;
+  /** Keyed by room id ("study") or room kind. An id wins over a kind. */
   rooms?: Record<string, { background?: string; bakedFurniture?: boolean }>;
+  /** Keyed by furniture id ("study-desk") or furniture kind ("desk"). An id wins over a kind. */
   furniture?: Record<string, CustomArt>;
-  /** Frames for file objects, by file kind: image, note, pdf... */
-  items?: Record<string, string>;
+}
+
+declare global {
+  interface Window {
+    /** The single-file build inlines art/manifest.json here, with every image as a data URI. */
+    __ROOMY_ART__?: ArtManifest;
+  }
 }
 
 let manifest: ArtManifest = { format: 'roomy.art/1' };
 const listeners = new Set<() => void>();
 
 export async function loadManifest(): Promise<void> {
+  const inlined = typeof window !== 'undefined' ? window.__ROOMY_ART__ : undefined;
+  if (inlined?.format === 'roomy.art/1') {
+    manifest = inlined;
+    listeners.forEach((fn) => fn());
+    return;
+  }
   if (__ARTIFACT__) return;
   try {
     const res = await fetch('art/manifest.json', { cache: 'no-cache' });
@@ -54,14 +67,14 @@ export function useManifest(): ArtManifest {
 
 export function artFor(m: ArtManifest, room: Room | null, f: Furniture): CustomArt | undefined {
   if (f.art && (f.art.closed || f.art.open || f.art.frames?.length || f.art.baked)) return f.art;
-  const byKind = m.furniture?.[f.kind];
-  if (byKind) return byKind;
-  if (room && !room.background && m.rooms?.[room.kind]?.bakedFurniture) return { baked: true };
+  const fromManifest = m.furniture?.[f.id] ?? m.furniture?.[f.kind];
+  if (fromManifest) return fromManifest;
+  if (room && !room.background && (m.rooms?.[room.id] ?? m.rooms?.[room.kind])?.bakedFurniture) return { baked: true };
   return undefined;
 }
 
 export function backgroundFor(m: ArtManifest, room: Room): string | undefined {
-  return room.background ?? m.rooms?.[room.kind]?.background;
+  return room.background ?? (m.rooms?.[room.id] ?? m.rooms?.[room.kind])?.background;
 }
 
 const resolved = new Map<string, string>();

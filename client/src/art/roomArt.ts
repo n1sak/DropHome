@@ -144,44 +144,21 @@ export function drawRoom(kind: RoomKind, w: number, h: number, wall: string, see
     p.rect(0, 0, w, fy, { fill: wall, stroke: 'none', roughness: 0.3 });
     const soft = shade(wall, -0.07);
 
+    /* 1. wall treatments, which the baseboard and floor then sit on top of */
     switch (kind) {
       case 'study':
-        for (let x = 16; x < w; x += 22) p.line(x, 0, x, fy - 6, { stroke: soft, strokeWidth: 1, roughness: 0.4 });
-        windowAt(p, w * 0.335, h * 0.11, w * 0.13, h * 0.28, '#3A568A');
-        // pennant
-        p.poly([[w * 0.53, h * 0.05], [w * 0.69, h * 0.09], [w * 0.53, h * 0.13]], { fill: '#3A568A', strokeWidth: 1.1 });
-        break;
       case 'office':
         for (let x = 16; x < w; x += 22) p.line(x, 0, x, fy - 6, { stroke: soft, strokeWidth: 1, roughness: 0.4 });
-        windowAt(p, w * 0.37, h * 0.11, w * 0.13, h * 0.28, '#8263A1');
-        frame(p, w * 0.56, h * 0.12, w * 0.1, h * 0.2, '#3B4155', '#F2EADB');
         break;
-      case 'bedroom': {
+      case 'bedroom':
         for (let i = 0; i < 26; i++) p.circle(rand() * w, rand() * (fy - 14), 3, { fill: shade(wall, -0.1), stroke: 'none', roughness: 0.3 });
-        windowAt(p, w * 0.1, h * 0.1, w * 0.2, h * 0.3, '#EBA9A9');
-        frame(p, w * 0.45, h * 0.18, w * 0.1, h * 0.22, '#97654A', '#CFE8EA');
-        // bed
-        const bx = w * 0.03;
-        const by = h * 0.56;
-        p.rrect(bx, by - 28, w * 0.07, h - by + 18, 5, { fill: '#97654A' }); // headboard
-        p.rect(bx + w * 0.05, by + 12, w * 0.33, h * 0.2, { fill: '#FBFAF6' }); // mattress
-        p.rrect(bx + w * 0.06, by + 2, w * 0.1, 16, 6, { fill: '#FFFFFF', strokeWidth: 1.2 }); // pillow
-        p.path(`M${bx + w * 0.17},${by + 10} L${bx + w * 0.38},${by + 10} L${bx + w * 0.38},${by + h * 0.3} L${bx + w * 0.17},${by + h * 0.3} Z`, { fill: '#8263A1' }); // blanket
-        p.line(bx + w * 0.17, by + 24, bx + w * 0.38, by + 24, { stroke: '#F4DDD8', strokeWidth: 2 });
-        p.rect(bx + w * 0.05, h * 0.92 - 4, 6, 10, { fill: '#74492F', strokeWidth: 1 });
-        p.rect(bx + w * 0.36, h * 0.92 - 4, 6, 10, { fill: '#74492F', strokeWidth: 1 });
         break;
-      }
       case 'bathroom': {
         const ty = h * 0.44;
         p.rect(0, ty, w, fy - ty, { fill: '#F3F7F8', stroke: 'none', roughness: 0.3 });
         for (let y = ty; y < fy - 6; y += 16) p.line(0, y, w, y, { stroke: '#BBD3D6', strokeWidth: 0.8, roughness: 0.4 });
         for (let x = 0; x < w; x += 16) p.line(x, ty, x, fy - 6, { stroke: '#BBD3D6', strokeWidth: 0.8, roughness: 0.4 });
         p.line(0, ty, w, ty, { stroke: '#62ABA2', strokeWidth: 3 });
-        windowAt(p, w * 0.62, h * 0.1, w * 0.14, h * 0.24);
-        // towel rail
-        p.line(w * 0.82, h * 0.34, w * 0.96, h * 0.34, { strokeWidth: 2.2, stroke: '#97A1B2' });
-        p.rect(w * 0.845, h * 0.34, w * 0.09, h * 0.16, { fill: '#EBA9A9', strokeWidth: 1.1 });
         break;
       }
       case 'kitchen': {
@@ -189,13 +166,6 @@ export function drawRoom(kind: RoomKind, w: number, h: number, wall: string, see
         p.rect(w * 0.26, ty, w * 0.47, h * 0.17, { fill: '#FBFAF6', stroke: 'none', roughness: 0.3 });
         for (let x = w * 0.26; x <= w * 0.73; x += 14) p.line(x, ty, x, ty + h * 0.17, { stroke: '#D8CFB4', strokeWidth: 0.8, roughness: 0.4 });
         p.line(w * 0.26, ty + h * 0.085, w * 0.73, ty + h * 0.085, { stroke: '#D8CFB4', strokeWidth: 0.8, roughness: 0.4 });
-        windowAt(p, w * 0.33, h * 0.09, w * 0.2, h * 0.26, '#CB5B43');
-        // hanging pans
-        p.line(w * 0.58, h * 0.12, w * 0.72, h * 0.12, { strokeWidth: 2 });
-        p.line(w * 0.61, h * 0.12, w * 0.61, h * 0.18, { strokeWidth: 1 });
-        p.circle(w * 0.61, h * 0.23, 22, { fill: '#3B4155', strokeWidth: 1.1 });
-        p.line(w * 0.685, h * 0.12, w * 0.685, h * 0.17, { strokeWidth: 1 });
-        p.circle(w * 0.685, h * 0.21, 16, { fill: '#CB5B43', strokeWidth: 1.1 });
         break;
       }
       case 'hall': {
@@ -203,12 +173,82 @@ export function drawRoom(kind: RoomKind, w: number, h: number, wall: string, see
         p.rect(0, py, w, fy - py, { fill: '#FBFAF6', stroke: 'none', roughness: 0.3 });
         p.line(0, py, w, py, { strokeWidth: 1.2 });
         for (let x = 10; x < w * 0.56; x += 56) p.rect(x, py + 9, 44, fy - py - 24, { strokeWidth: 0.9, stroke: '#CFCABB', fill: 'none' });
-        // round mirror over the console
-        p.circle(w * 0.2, h * 0.27, 62, { fill: '#E6BA43' });
+        break;
+      }
+      case 'living':
+        p.line(0, h * 0.06, w, h * 0.06, { stroke: soft, strokeWidth: 2 });
+        break;
+      case 'workshop':
+      case 'cellar':
+        bricks(p, w, fy - 6, wall);
+        break;
+      case 'den':
+        for (let x = 0; x < w; x += 40) p.rect(x + 4, 6, 32, fy - 18, { fill: shade(wall, -0.06), stroke: 'none', roughness: 0.4 });
+        break;
+      case 'library': {
+        const py = h * 0.52;
+        p.rect(0, py, w, fy - py, { fill: '#B08A62', stroke: 'none', roughness: 0.3 });
+        p.line(0, py, w, py, { strokeWidth: 1.2 });
+        break;
+      }
+      case 'greenhouse':
+        p.rect(0, 0, w, fy - 6, { fill: 'var(--glass)', stroke: 'none', roughness: 0.3 });
+        for (let x = 0; x <= w; x += w / 8) p.line(x, 0, x, fy - 6, { stroke: '#FBFAF6', strokeWidth: 3.4, roughness: 0.4 });
+        for (let y = h * 0.26; y < fy - 10; y += h * 0.26) p.line(0, y, w, y, { stroke: '#FBFAF6', strokeWidth: 3.4, roughness: 0.4 });
+        break;
+      case 'studio': {
+        const blots = ['#CB5B43', '#62ABA2', '#E6BA43', '#8263A1'];
+        for (let i = 0; i < 9; i++) p.circle(w * (0.3 + rand() * 0.66), h * (0.46 + rand() * 0.3), 4 + rand() * 7, { fill: blots[i % 4], stroke: 'none', roughness: 1.4, opacity: 0.55 });
+        break;
+      }
+    }
+
+    floor(p, kind, w, h, rand);
+
+    /* 2. windows and everything that hangs on the wall or stands on the floor */
+    switch (kind) {
+      case 'study':
+        windowAt(p, w * 0.335, h * 0.11, w * 0.13, h * 0.28, '#3A568A');
+        p.poly([[w * 0.53, h * 0.05], [w * 0.69, h * 0.09], [w * 0.53, h * 0.13]], { fill: '#3A568A', strokeWidth: 1.1 }); // pennant
+        break;
+      case 'office':
+        windowAt(p, w * 0.37, h * 0.11, w * 0.13, h * 0.28, '#8263A1');
+        frame(p, w * 0.56, h * 0.12, w * 0.1, h * 0.2, '#3B4155', '#F2EADB');
+        break;
+      case 'bedroom': {
+        windowAt(p, w * 0.1, h * 0.1, w * 0.2, h * 0.3, '#EBA9A9');
+        frame(p, w * 0.45, h * 0.18, w * 0.1, h * 0.22, '#97654A', '#CFE8EA');
+        p.ellipse(w * 0.56, h * 0.95, w * 0.3, h * 0.06, { fill: '#FBFAF6', strokeWidth: 1 }); // rug
+        const bx = w * 0.03;
+        const by = h * 0.56;
+        p.rect(bx + w * 0.05, h * 0.9, 6, h * 0.035, { fill: '#74492F', strokeWidth: 1 });
+        p.rect(bx + w * 0.36, h * 0.9, 6, h * 0.035, { fill: '#74492F', strokeWidth: 1 });
+        p.rrect(bx, by - 28, w * 0.07, h * 0.92 - by + 28, 5, { fill: '#97654A' }); // headboard
+        p.rect(bx + w * 0.05, by + 12, w * 0.33, h * 0.9 - by - 12, { fill: '#FBFAF6' }); // mattress
+        p.rrect(bx + w * 0.06, by + 2, w * 0.1, 16, 6, { fill: '#FFFFFF', strokeWidth: 1.2 }); // pillow
+        p.rect(bx + w * 0.17, by + 10, w * 0.21, h * 0.9 - by - 10, { fill: '#8263A1' }); // blanket
+        p.line(bx + w * 0.17, by + 24, bx + w * 0.38, by + 24, { stroke: '#F4DDD8', strokeWidth: 2 });
+        break;
+      }
+      case 'bathroom':
+        windowAt(p, w * 0.62, h * 0.1, w * 0.14, h * 0.24);
+        p.line(w * 0.82, h * 0.34, w * 0.96, h * 0.34, { strokeWidth: 2.2, stroke: '#97A1B2' }); // towel rail
+        p.rect(w * 0.845, h * 0.34, w * 0.09, h * 0.16, { fill: '#EBA9A9', strokeWidth: 1.1 });
+        p.rrect(w * 0.44, h * 0.93, w * 0.26, h * 0.045, 4, { fill: '#62ABA2', strokeWidth: 1 }); // bath mat
+        break;
+      case 'kitchen':
+        windowAt(p, w * 0.33, h * 0.09, w * 0.2, h * 0.26, '#CB5B43');
+        p.line(w * 0.58, h * 0.12, w * 0.72, h * 0.12, { strokeWidth: 2 }); // hanging pans
+        p.line(w * 0.61, h * 0.12, w * 0.61, h * 0.18, { strokeWidth: 1 });
+        p.circle(w * 0.61, h * 0.23, 22, { fill: '#3B4155', strokeWidth: 1.1 });
+        p.line(w * 0.685, h * 0.12, w * 0.685, h * 0.17, { strokeWidth: 1 });
+        p.circle(w * 0.685, h * 0.21, 16, { fill: '#CB5B43', strokeWidth: 1.1 });
+        break;
+      case 'hall': {
+        p.circle(w * 0.2, h * 0.27, 62, { fill: '#E6BA43' }); // round mirror over the console
         p.circle(w * 0.2, h * 0.27, 50, { fill: 'var(--glass)', strokeWidth: 1 });
         p.line(w * 0.17, h * 0.22, w * 0.2, h * 0.17, { stroke: '#FFFFFF', strokeWidth: 2 });
-        // coat hooks
-        p.line(w * 0.38, h * 0.2, w * 0.54, h * 0.2, { strokeWidth: 3, stroke: '#97654A' });
+        p.line(w * 0.38, h * 0.2, w * 0.54, h * 0.2, { strokeWidth: 3, stroke: '#97654A' }); // coat hooks
         p.poly([[w * 0.41, h * 0.2], [w * 0.45, h * 0.2], [w * 0.46, h * 0.46], [w * 0.4, h * 0.46]], { fill: '#3A568A', strokeWidth: 1.1 });
         p.curve([[w * 0.5, h * 0.2], [w * 0.49, h * 0.32], [w * 0.52, h * 0.42]], { stroke: '#CB5B43', strokeWidth: 4 });
         // staircase going up to the right
@@ -228,89 +268,52 @@ export function drawRoom(kind: RoomKind, w: number, h: number, wall: string, see
         for (let i = 0; i < steps; i += 2) p.line(sx + i * sw + sw / 2, fy - (i + 1) * shh, sx + i * sw + sw / 2, fy - (i + 1) * shh - 36, { strokeWidth: 1.6, stroke: '#74492F' });
         break;
       }
-      case 'living': {
-        p.line(0, h * 0.06, w, h * 0.06, { stroke: soft, strokeWidth: 2 });
+      case 'living':
         windowAt(p, w * 0.42, h * 0.06, w * 0.18, h * 0.18);
+        p.ellipse(w * 0.5, h * 0.925, w * 0.66, h * 0.12, { fill: '#CB5B43', strokeWidth: 1.2 }); // rug
+        p.ellipse(w * 0.5, h * 0.925, w * 0.54, h * 0.08, { fill: 'none', stroke: '#F6E3D0', strokeWidth: 1.4 });
+        p.line(w * 0.715, h * 0.3, w * 0.715, h * 0.9, { strokeWidth: 2 }); // floor lamp
+        p.poly([[w * 0.685, h * 0.3], [w * 0.745, h * 0.3], [w * 0.73, h * 0.2], [w * 0.7, h * 0.2]], { fill: '#E6BA43' });
+        p.ellipse(w * 0.715, h * 0.905, 20, 5, { fill: '#3B4155', strokeWidth: 1 });
+        plant(p, w * 0.285, h * 0.9, 1);
         break;
-      }
-      case 'workshop': {
-        bricks(p, w, fy - 6, wall);
-        // bare bulb + bike wheel on the wall
-        p.line(w * 0.66, 0, w * 0.66, h * 0.1, { strokeWidth: 1 });
+      case 'workshop':
+        p.line(w * 0.66, 0, w * 0.66, h * 0.1, { strokeWidth: 1 }); // bare bulb
         p.circle(w * 0.66, h * 0.13, 12, { fill: '#FFD36B', strokeWidth: 1 });
-        p.circle(w * 0.9, h * 0.3, 54, { strokeWidth: 2.4, fill: 'none' });
+        p.circle(w * 0.9, h * 0.3, 54, { strokeWidth: 2.4, fill: 'none' }); // bike wheel on the wall
         p.circle(w * 0.9, h * 0.3, 8, { fill: '#97A1B2', strokeWidth: 1 });
         for (let a = 0; a < 6; a++) p.line(w * 0.9, h * 0.3, w * 0.9 + Math.cos((a * Math.PI) / 3) * 26, h * 0.3 + Math.sin((a * Math.PI) / 3) * 26, { strokeWidth: 0.7 });
         break;
-      }
-      case 'den': {
-        for (let x = 0; x < w; x += 40) p.rect(x + 4, 6, 32, fy - 18, { fill: shade(wall, -0.06), stroke: 'none', roughness: 0.4 });
-        // bean bag + string lights
-        p.path(`M${w * 0.4},${h * 0.94} Q${w * 0.36},${h * 0.7} ${w * 0.5},${h * 0.7} Q${w * 0.66},${h * 0.72} ${w * 0.62},${h * 0.94} Z`, { fill: '#E6BA43' });
-        p.curve([[0, h * 0.05], [w * 0.25, h * 0.1], [w * 0.5, h * 0.04], [w * 0.75, h * 0.1], [w, h * 0.05]], { strokeWidth: 1 });
+      case 'den':
+        p.path(`M${w * 0.4},${h * 0.94} Q${w * 0.36},${h * 0.7} ${w * 0.5},${h * 0.7} Q${w * 0.66},${h * 0.72} ${w * 0.62},${h * 0.94} Z`, { fill: '#E6BA43' }); // bean bag
+        p.curve([[0, h * 0.05], [w * 0.25, h * 0.1], [w * 0.5, h * 0.04], [w * 0.75, h * 0.1], [w, h * 0.05]], { strokeWidth: 1 }); // string lights
         for (let i = 1; i < 10; i++) p.circle((w / 10) * i, h * (0.07 + (i % 2) * 0.025), 6, { fill: ['#FFD36B', '#EBA9A9', '#BFDDF5'][i % 3], strokeWidth: 0.7 });
         break;
-      }
-      case 'cellar': {
-        bricks(p, w, fy - 6, wall);
-        // pipes
-        p.line(0, h * 0.08, w, h * 0.08, { stroke: '#97A1B2', strokeWidth: 6, roughness: 0.4 });
+      case 'cellar':
+        p.line(0, h * 0.08, w, h * 0.08, { stroke: '#97A1B2', strokeWidth: 6, roughness: 0.4 }); // pipes
         p.line(w * 0.7, h * 0.08, w * 0.7, h * 0.34, { stroke: '#97A1B2', strokeWidth: 5, roughness: 0.4 });
-        // water heater
-        p.rrect(w * 0.76, h * 0.34, w * 0.15, h * 0.54, 14, { fill: '#E9EDF1' });
+        p.rrect(w * 0.76, h * 0.34, w * 0.15, h * 0.54, 14, { fill: '#E9EDF1' }); // water heater
         p.rect(w * 0.8, h * 0.62, w * 0.07, h * 0.08, { fill: '#CB5B43', strokeWidth: 1 });
         p.circle(w * 0.835, h * 0.48, 12, { fill: '#FBFAF6', strokeWidth: 1 });
         p.rect(w * 0.78, h * 0.88, 6, h * 0.05, { fill: '#3B4155', strokeWidth: 1 });
         p.rect(w * 0.88, h * 0.88, 6, h * 0.05, { fill: '#3B4155', strokeWidth: 1 });
-        // bulb
-        p.line(w * 0.46, h * 0.08, w * 0.46, h * 0.18, { strokeWidth: 1 });
+        p.line(w * 0.46, h * 0.08, w * 0.46, h * 0.18, { strokeWidth: 1 }); // bulb
         p.circle(w * 0.46, h * 0.21, 12, { fill: '#FFD36B', strokeWidth: 1 });
         break;
-      }
-      case 'studio': {
+      case 'studio':
         windowAt(p, w * 0.08, h * 0.08, w * 0.2, h * 0.18);
-        const blots = ['#CB5B43', '#62ABA2', '#E6BA43', '#8263A1'];
-        for (let i = 0; i < 9; i++) p.circle(w * (0.3 + rand() * 0.66), h * (0.46 + rand() * 0.3), 4 + rand() * 7, { fill: blots[i % 4], stroke: 'none', roughness: 1.4, opacity: 0.55 });
         break;
-      }
-      case 'library': {
-        const py = h * 0.52;
-        p.rect(0, py, w, fy - py, { fill: '#B08A62', stroke: 'none', roughness: 0.3 });
-        p.line(0, py, w, py, { strokeWidth: 1.2 });
+      case 'library':
         windowAt(p, w * 0.42, h * 0.1, w * 0.16, h * 0.34, '#74492F');
-        p.path(`M${w * 0.34},${h * 0.92} L${w * 0.34},${h * 0.62} Q${w * 0.34},${h * 0.54} ${w * 0.4},${h * 0.56} L${w * 0.4},${h * 0.92} Z`, { fill: '#5E8B6B' }); // wing chair back
+        p.path(`M${w * 0.34},${h * 0.92} L${w * 0.34},${h * 0.62} Q${w * 0.34},${h * 0.54} ${w * 0.4},${h * 0.56} L${w * 0.4},${h * 0.92} Z`, { fill: '#5E8B6B' }); // wing chair
         break;
-      }
-      case 'greenhouse': {
-        p.rect(0, 0, w, fy - 6, { fill: 'var(--glass)', stroke: 'none', roughness: 0.3 });
-        for (let x = 0; x <= w; x += w / 8) p.line(x, 0, x, fy - 6, { stroke: '#FBFAF6', strokeWidth: 3.4, roughness: 0.4 });
-        for (let y = h * 0.26; y < fy - 10; y += h * 0.26) p.line(0, y, w, y, { stroke: '#FBFAF6', strokeWidth: 3.4, roughness: 0.4 });
+      case 'greenhouse':
         plant(p, w * 0.06, h * 0.9, 1.2);
-        // hanging basket
-        p.line(w * 0.5, 0, w * 0.5, h * 0.18, { strokeWidth: 1 });
+        p.line(w * 0.5, 0, w * 0.5, h * 0.18, { strokeWidth: 1 }); // hanging basket
         p.arc(w * 0.5, h * 0.18, 40, 30, 0, Math.PI, true, { fill: '#97654A' });
         p.curve([[w * 0.47, h * 0.18], [w * 0.45, h * 0.3], [w * 0.46, h * 0.36]], { stroke: '#4E8A55', strokeWidth: 1.8 });
         p.curve([[w * 0.53, h * 0.18], [w * 0.56, h * 0.28], [w * 0.54, h * 0.34]], { stroke: '#4E8A55', strokeWidth: 1.8 });
         break;
-      }
-    }
-    floor(p, kind, w, h, rand);
-
-    if (kind === 'bathroom') {
-      // bath mat
-      p.rrect(w * 0.44, h * 0.93, w * 0.26, h * 0.045, 4, { fill: '#62ABA2', strokeWidth: 1 });
-    }
-    if (kind === 'bedroom') {
-      p.ellipse(w * 0.56, h * 0.95, w * 0.3, h * 0.06, { fill: '#FBFAF6', strokeWidth: 1 });
-    }
-    if (kind === 'living') {
-      // rug, floor lamp, plant: drawn after the floor so they sit on it
-      p.ellipse(w * 0.5, h * 0.925, w * 0.66, h * 0.12, { fill: '#CB5B43', strokeWidth: 1.2 });
-      p.ellipse(w * 0.5, h * 0.925, w * 0.54, h * 0.08, { fill: 'none', stroke: '#F6E3D0', strokeWidth: 1.4 });
-      p.line(w * 0.715, h * 0.3, w * 0.715, h * 0.9, { strokeWidth: 2 });
-      p.poly([[w * 0.685, h * 0.3], [w * 0.745, h * 0.3], [w * 0.73, h * 0.2], [w * 0.7, h * 0.2]], { fill: '#E6BA43' });
-      p.ellipse(w * 0.715, h * 0.905, 20, 5, { fill: '#3B4155', strokeWidth: 1 });
-      plant(p, w * 0.285, h * 0.9, 1);
     }
   }
 

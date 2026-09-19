@@ -57,6 +57,8 @@ export default function App() {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key !== 'Escape') return;
+      // a text field or an open menu handles its own Escape
+      if (/^(INPUT|TEXTAREA|SELECT)$/.test((e.target as HTMLElement)?.tagName ?? '') || document.querySelector('.menu')) return;
       const s = useApp.getState();
       if (s.moveIds) return s.openMove(null);
       if (s.dialog) return s.setDialog(null);

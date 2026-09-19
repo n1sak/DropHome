@@ -2,6 +2,8 @@ import type { FileItem, House } from '../model/types';
 import { blobToDataUrl } from '../lib/thumbs';
 import type { Store } from './types';
 
+declare const __ARTIFACT__: boolean;
+
 const DB_NAME = 'roomy';
 const DB_VERSION = 1;
 
@@ -120,10 +122,23 @@ export class LocalStore implements Store {
     if (hit) return hit;
     const blob = await this.blob(file);
     if (!blob) return null;
-    const url = await blobToDataUrl(blob);
-    if (this.urls.size > 60) this.urls.clear();
+    // The published demo is sandboxed and may refuse blob: URLs, so it gets data: URLs (small files only).
+    // Everywhere else an object URL is cheaper and has no size limit.
+    let url: string;
+    if (__ARTIFACT__) {
+      if (blob.size > 48_000_000) return null;
+      url = await blobToDataUrl(blob);
+    } else {
+      url = URL.createObjectURL(blob);
+    }
+    if (this.urls.size > 60) this.forgetUrls();
     this.urls.set(file.id, url);
     return url;
+  }
+
+  private forgetUrls() {
+    for (const u of this.urls.values()) if (u.startsWith('blob:')) URL.revokeObjectURL(u);
+    this.urls.clear();
   }
 
   async share(_id: string) {
@@ -155,6 +170,6 @@ export class LocalStore implements Store {
     const tx = this.db.transaction(['kv', 'files', 'blobs', 'art'], 'readwrite');
     for (const name of ['kv', 'files', 'blobs', 'art']) tx.objectStore(name).clear();
     await done(tx);
-    this.urls.clear();
+    this.forgetUrls();
   }
 }

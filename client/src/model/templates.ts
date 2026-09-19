@@ -316,8 +316,8 @@ function dupIndex(pieces: Piece[], i: number): string {
 
 export function makeYard(): Furniture[] {
   return [
-    { ...makeFurniture('porch', { x: -178, y: -150, w: 170, h: 150 }, PORCH_ID) },
-    { ...makeFurniture('mailbox', { x: -262, y: -104, w: 64, h: 104 }, MAILBOX_ID) },
+    { ...makeFurniture('porch', { x: -170, y: -150, w: 170, h: 150 }, PORCH_ID) },
+    { ...makeFurniture('mailbox', { x: -256, y: -104, w: 64, h: 104 }, MAILBOX_ID) },
     { ...makeFurniture('bins', { x: 34, y: -92, w: 120, h: 92 }, BINS_ID) },
   ];
 }

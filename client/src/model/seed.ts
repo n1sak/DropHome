@@ -148,7 +148,7 @@ export const SEEDS: Seed[] = [
   { name: 'Apartment lease renewal.pdf', to: [YARD_ID, PORCH_ID], days: 1, tags: [], pdf: ['LEASE RENEWAL OFFER (sample)', 'Your lease ends May 31, 2027.', 'Reply by March 1 to renew at the current rate.'] },
   { name: 'Halloween costume ideas.md', to: [YARD_ID, PORCH_ID], days: 3, tags: [], text: `Halloween costume ideas (rough)\n\n- a 404 page\n- the junk drawer\n- Schrodinger's cat, box included` },
   { name: 'sorting_visualizer.py', to: [YARD_ID, PORCH_ID], days: 2, tags: [], text: `# visualize bubble, merge and quick sort side by side\nimport random\n\ndef bubble(a):\n    for i in range(len(a)):\n        for j in range(len(a) - i - 1):\n            if a[j] > a[j + 1]:\n                a[j], a[j + 1] = a[j + 1], a[j]\n                yield a\n` },
-  { name: '8th grade yearbook page.jpg', to: [YARD_ID, PORCH_ID], days: 2050, scene: 'yearbook', tags: [] },
+  { name: '8th grade yearbook page.jpg', to: [YARD_ID, PORCH_ID], days: 2050, touched: 0, scene: 'yearbook', tags: [] },
 
   /* ---- mailbox and bins ---- */
   { name: 'Group project slides - from Maya.pdf', to: [YARD_ID, MAILBOX_ID], days: 0, tags: ['shared with me'], pdf: ['CPSC 223 group project (sample)', 'Slide 1: What we are building', 'Slide 2: Who does what', 'Slide 3: Timeline'] },

@@ -130,7 +130,8 @@ function CustomArtView({ art, open }: { art: CustomArt; open: boolean }) {
     return () => clearInterval(timer);
   }, [open, frames, art.fps]);
 
-  if (art.baked) return null;
+  // part of the room backdrop: nothing to draw while closed, but an "open" drawing can still appear over it
+  if (art.baked) return art.open && openUrl ? <img className={`furn-img${open ? '' : ' is-hidden'}`} src={openUrl} alt="" draggable={false} /> : null;
   if (frames) return <FlipFrames frames={frames} index={frame} />;
   return (
     <>

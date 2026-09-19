@@ -1,5 +1,7 @@
 import type { FileItem } from '../model/types';
 
+declare const __ARTIFACT__: boolean;
+
 type Downloads = { save(req: { filename: string; data: Blob }): Promise<{ status: string }> };
 
 /**
@@ -22,6 +24,8 @@ export async function saveFile(file: FileItem, blob: Blob): Promise<'saved' | 'd
   } catch {
     /* not in an artifact viewer */
   }
+  // The published demo runs sandboxed, where a page-started download silently does nothing.
+  if (__ARTIFACT__) return 'unsupported';
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;

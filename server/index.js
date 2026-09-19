@@ -98,8 +98,8 @@ function sendStored(res, dir, name, mime, downloadName) {
   const file = path.join(dir, name);
   if (!fs.existsSync(file)) return res.status(404).json({ error: 'The contents of this file are missing.' });
   res.type(mime || 'application/octet-stream');
-  // never let an uploaded HTML or SVG file run scripts on this origin
-  res.set('Content-Security-Policy', "default-src 'none'; img-src 'self' data:; media-src 'self'; style-src 'unsafe-inline'; sandbox");
+  // never let an uploaded HTML or SVG file run scripts on this origin (PDFs are left alone so the browser's viewer can show them)
+  if (/html|xml|svg/i.test(mime ?? '')) res.set('Content-Security-Policy', "default-src 'none'; img-src 'self' data:; style-src 'unsafe-inline'; sandbox");
   res.set('X-Content-Type-Options', 'nosniff');
   if (downloadName) res.attachment(downloadName);
   res.sendFile(file);

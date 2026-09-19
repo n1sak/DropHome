@@ -1,0 +1,17 @@
+{
+  "format": "roomy.art/1",
+  "rooms": {
+    "study": { "background": "rooms/study.png" }
+  },
+  "furniture": {
+    "desk": { "closed": "furniture/desk-closed.png", "open": "furniture/desk-open.png" },
+    "study-closet": {
+      "frames": ["furniture/closet-1.png", "furniture/closet-2.png", "furniture/closet-3.png"],
+      "fps": 10
+    },
+    "tv": {
+      "closed": "furniture/tv.png",
+      "slots": [{ "x": 9, "y": 4, "w": 82, "h": 52, "shape": "screen" }]
+    }
+  }
+}

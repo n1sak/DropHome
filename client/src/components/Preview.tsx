@@ -29,7 +29,7 @@ function PreviewOf({ file }: { file: FileItem }) {
     const blob = await app.fileBlob(file);
     if (!blob) return app.toast('That file has no contents to download.', { tone: 'warn' });
     const result = await saveFile(file, blob);
-    if (result === 'unsupported') app.toast(`This viewer cannot download .${file.ext} files.`, { tone: 'warn' });
+    if (result === 'unsupported') app.toast(`This viewer cannot save .${file.ext || 'this kind of'} files. Run Roomy from the repo to download anything.`, { tone: 'warn' });
   };
   const copyLink = async () => {
     const url = file.shared?.url;
@@ -163,7 +163,9 @@ function PreviewOf({ file }: { file: FileItem }) {
 
 function Viewer({ file }: { file: FileItem }) {
   const textual = isTextual(file.kind, file.ext, file.mime);
-  const needsUrl = file.kind === 'image' || file.kind === 'audio' || file.kind === 'video' || (file.kind === 'pdf' && !__ARTIFACT__);
+  // inline PDFs need the browser's own viewer, which sandboxed pages and a few browsers do not have
+  const canShowPdf = !__ARTIFACT__ && (navigator as Navigator & { pdfViewerEnabled?: boolean }).pdfViewerEnabled !== false;
+  const needsUrl = file.kind === 'image' || file.kind === 'audio' || file.kind === 'video' || (file.kind === 'pdf' && canShowPdf);
   const url = useFileUrl(needsUrl ? file : null);
   const text = useFileText(file, textual);
 

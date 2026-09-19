@@ -48,7 +48,7 @@ export function FileMenu({ at, onClose }: { at: MenuAt; onClose: () => void }) {
     const blob = await app.fileBlob(file);
     if (!blob) return app.toast('That file has no contents to download.', { tone: 'warn' });
     const result = await saveFile(file, blob);
-    if (result === 'unsupported') app.toast(`This viewer cannot download .${file.ext} files.`, { tone: 'warn' });
+    if (result === 'unsupported') app.toast(`This viewer cannot save .${file.ext || 'this kind of'} files. Run Roomy from the repo to download anything.`, { tone: 'warn' });
   };
 
   return (

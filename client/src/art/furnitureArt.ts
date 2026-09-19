@@ -1064,29 +1064,32 @@ function planter(b: Builder) {
 
 function porch(b: Builder) {
   const { w, h, count } = b;
-  const deckY = h - 30;
+  const deckY = h - 34;
+  b.add('shelter', (p) => {
+    // lean-to roof fixed to the house wall on the right, held up by a post
+    p.line(w * 0.3, h * 0.27, w * 0.3, deckY, { strokeWidth: 5, stroke: C.white });
+    p.line(w * 0.3 - 2.5, h * 0.27, w * 0.3 - 2.5, deckY, { strokeWidth: 1.1 });
+    p.line(w * 0.3 + 2.5, h * 0.27, w * 0.3 + 2.5, deckY, { strokeWidth: 1.1 });
+    p.poly([[w * 0.16, h * 0.27], [w + 3, h * 0.05], [w + 3, h * 0.15], [w * 0.16, h * 0.36]], { fill: '#56627F' });
+    p.line(w * 0.16, h * 0.36, w + 3, h * 0.15, { stroke: C.white, strokeWidth: 3 });
+    // lantern
+    p.line(w * 0.7, h * 0.2, w * 0.7, h * 0.3, { strokeWidth: 1 });
+    p.rrect(w * 0.7 - 6, h * 0.3, 12, 16, 3, { fill: C.lamp, strokeWidth: 1.1 });
+  });
   b.add('deck', (p) => {
-    // awning fixed to the house wall on the right
-    p.poly([[w * 0.2, h * 0.2], [w + 2, h * 0.04], [w + 2, h * 0.16], [w * 0.2, h * 0.3]], { fill: '#56627F' });
-    p.line(w * 0.3, h * 0.29, w * 0.3, deckY, { strokeWidth: 3.4, stroke: C.white });
-    p.line(w * 0.3, h * 0.29, w * 0.3, deckY, { strokeWidth: 1.2 });
-    // lamp on the wall
-    p.rect(w - 12, h * 0.34, 8, 14, { fill: C.lamp, strokeWidth: 1 });
-    // deck and steps
-    p.rect(w * 0.24, deckY, w * 0.76, 10, { fill: C.oak });
-    p.rect(w * 0.3, deckY + 10, w * 0.7, 20, { fill: C.oakDark, fillStyle: 'hachure', hachureGap: 6, hachureAngle: 90, fillWeight: 1 });
-    p.rect(w * 0.12, deckY + 10, w * 0.14, 10, { fill: C.oak });
-    p.rect(0, deckY + 20, w * 0.14, 10, { fill: C.oak });
-    // doormat
-    p.rrect(w * 0.7, deckY - 4, w * 0.26, 5, 2, { fill: C.brick, strokeWidth: 1 });
+    p.rect(w * 0.3, deckY + 9, w * 0.7, h - deckY - 9, { fill: C.oakDark, fillStyle: 'cross-hatch', hachureGap: 7, fillWeight: 0.9, strokeWidth: 1.2 });
+    p.rect(w * 0.14, deckY + 12, w * 0.18, h - deckY - 12, { fill: C.oak });
+    p.rect(0, deckY + 23, w * 0.16, h - deckY - 23, { fill: C.oak });
+    p.rect(w * 0.26, deckY, w * 0.74 + 2, 10, { fill: C.oak });
+    p.rrect(w * 0.74, deckY - 4, w * 0.22, 5, 2, { fill: C.brick, strokeWidth: 1 }); // doormat
   });
   // packages: drawn from the number of files waiting outside
   const spots: [number, number, number, number, string][] = [
-    [w * 0.34, 34, 40, 34, C.card],
-    [w * 0.58, 26, 30, 26, C.cardDark],
-    [w * 0.4, 62, 30, 28, shade(C.card, 0.1)],
-    [w * 0.76, 22, 26, 22, C.card],
-    [w * 0.6, 48, 26, 22, shade(C.cardDark, 0.12)],
+    [w * 0.36, 36, 42, 36, C.card],
+    [w * 0.62, 28, 32, 28, C.cardDark],
+    [w * 0.42, 66, 32, 30, shade(C.card, 0.1)],
+    [w * 0.82, 22, 24, 22, C.card],
+    [w * 0.64, 50, 26, 22, shade(C.cardDark, 0.12)],
   ];
   const n = Math.min(count, spots.length);
   for (let i = 0; i < n; i++) {

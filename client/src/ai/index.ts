@@ -151,7 +151,8 @@ export async function sortFiles(files: FileItem[], house: House, opts: { serverA
   try {
     const sample = await getSample();
     if (sample) {
-      raw = await sample.json(prompt, { modelTier: 'quick', cache: false, signal: opts.signal });
+      // only pass `signal` when there is one: the runtime rejects anything that is not an AbortSignal
+      raw = await sample.json(prompt, { modelTier: 'quick', cache: false, ...(opts.signal ? { signal: opts.signal } : {}) });
       brain = 'claude';
     } else if (opts.serverAi) {
       raw = parseLoose(await askServer(prompt, opts.signal));
@@ -205,7 +206,7 @@ Reply with only JSON: {"answer": "one or two short sentences, say where the thin
     let raw: unknown = null;
     let brain: BrainKind = 'rules';
     if (sample) {
-      raw = await sample.json(prompt, { modelTier: 'quick', signal: opts.signal });
+      raw = await sample.json(prompt, { modelTier: 'quick', ...(opts.signal ? { signal: opts.signal } : {}) });
       brain = 'claude';
     } else if (opts.serverAi) {
       raw = parseLoose(await askServer(prompt, opts.signal));

@@ -11,7 +11,7 @@ import { DAY, ageInDays } from '../lib/time';
 import { makeThumb, readSnippet } from '../lib/thumbs';
 import { sounds } from '../lib/sound';
 import { defaultHouse } from '../model/defaultHouse';
-import { freeCells } from '../model/layout';
+import { COL_W, GAP, freeCells } from '../model/layout';
 import { SEEDS, buildSeed } from '../model/seed';
 import { CATALOG, makeFurniture, makeRoom, uid } from '../model/templates';
 import {
@@ -114,6 +114,7 @@ export interface AppState {
   selectFurniture(id: string | null): void;
   setBuildTarget(t: { floor: number; col: number } | null): void;
   updateRoom(id: string, patch: Partial<Room>): void;
+  setRoomSpan(id: string, span: number): void;
   addRoom(kind: RoomKind, floor: number, col: number): void;
   removeRoom(id: string): void;
   moveRoom(id: string, floor: number, col: number): void;
@@ -150,6 +151,7 @@ let toastSeq = 1;
 let flightSeq = 1;
 let unpackAbort: AbortController | null = null;
 let initStarted = false;
+let unsubscribe: (() => void) | undefined;
 
 const persistHouse = (house: House) => {
   clearTimeout(saveTimer);
@@ -268,7 +270,8 @@ export const useApp = create<AppState>((set, get) => {
       set({ ready: true, booting: null, brain: await brainKind(backend.serverAi) });
       // the artifact capability can resolve a moment after load
       setTimeout(async () => set({ brain: await brainKind(get().serverAi) }), 4000);
-      store.subscribe?.(() => void reload());
+      unsubscribe?.();
+      unsubscribe = store.subscribe?.(() => void reload());
     },
 
     goHome() {
@@ -506,6 +509,24 @@ export const useApp = create<AppState>((set, get) => {
     },
     updateRoom(id, p) {
       editHouse((h) => ({ ...h, rooms: h.rooms.map((r) => (r.id === id ? { ...r, ...p } : r)) }));
+    },
+    setRoomSpan(id, span) {
+      const room = get().house.rooms.find((r) => r.id === id);
+      if (!room || room.floor === 'attic' || span < 1 || span === room.span) return;
+      if (span > room.span) {
+        const free = freeCells(get().house, room.floor, id);
+        for (let c = room.col; c < room.col + span; c++) if (!free[c]) return get().toast('There is a room in the way.', { tone: 'warn' });
+      }
+      // positions are percentages of the room, so rescale them or every piece would stretch with the walls
+      const width = (n: number) => n * COL_W + (n - 1) * GAP;
+      const k = width(room.span) / width(span);
+      const furniture = room.furniture.map((f) => {
+        const w = Math.min(100, Math.round(f.w * k * 2) / 2);
+        const x = Math.max(0, Math.min(100 - w, Math.round(f.x * k * 2) / 2)); // narrowing: keep every piece inside the walls
+        return { ...f, x, w };
+      });
+      editHouse((h) => ({ ...h, rooms: h.rooms.map((r) => (r.id === id ? { ...r, span, furniture } : r)) }));
+      sounds.build();
     },
     addRoom(kind, floor, col) {
       const room = makeRoom(kind, floor, col);
