@@ -18,6 +18,7 @@ export function Labels() {
   const view = useApp((s) => s.view);
   const renovate = useApp((s) => s.renovate);
   const selectedId = useApp((s) => s.selectedFurnitureId);
+  const hoverId = useApp((s) => s.hoverId);
   const buildTarget = useApp((s) => s.buildTarget);
   const enterRoom = useApp((s) => s.enterRoom);
   const openFurniture = useApp((s) => s.openFurniture);
@@ -58,7 +59,7 @@ export function Labels() {
           const r = project(cam, yardRect(geo, f));
           const n = contentsOf(f, null, files).length;
           return (
-            <button key={f.id} className={`tag tag-yard${n ? ' has-files' : ''}`} style={{ left: r.x + r.w / 2, top: r.y - 4 }} onClick={() => openFurniture(YARD_ID, f.id)}>
+            <button key={f.id} className={`tag tag-yard${n ? ' has-files' : ''}${hoverId === f.id ? ' is-hot' : ''}`} style={{ left: r.x + r.w / 2, top: r.y - 4 }} onClick={() => openFurniture(YARD_ID, f.id)}>
               <span className="tag-name">{f.name}</span>
               {n > 0 && <span className="tag-count">{n}</span>}
             </button>
@@ -87,7 +88,7 @@ export function Labels() {
           return (
             <button
               key={f.id}
-              className={`tag${n ? ' has-files' : ''}${selectedId === f.id ? ' is-selected' : ''}`}
+              className={`tag${n ? ' has-files' : ''}${selectedId === f.id ? ' is-selected' : ''}${hoverId === f.id || renovate ? ' is-hot' : ''}`}
               style={{ left: r.x + r.w / 2, top: Math.max(r.y - 4, 96) }}
               onClick={() => (renovate ? selectFurniture(f.id) : openFurniture(focusRoom.id, f.id))}
               aria-label={`${f.name}, ${n} files. ${f.hint}`}

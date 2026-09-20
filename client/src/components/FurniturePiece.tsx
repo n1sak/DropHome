@@ -28,6 +28,7 @@ export const FurniturePiece = memo(function FurniturePiece({ room, f, rect, live
   const dropping = useApp((s) => !!s.dragging);
   const openFurniture = useApp((s) => s.openFurniture);
   const selectFurniture = useApp((s) => s.selectFurniture);
+  const setHover = useApp((st) => st.setHover);
   const updateFurniture = useApp((s) => s.updateFurniture);
   const { cam } = useStage();
   const moved = useRef(false);
@@ -103,8 +104,8 @@ export const FurniturePiece = memo(function FurniturePiece({ room, f, rect, live
       data-drop-room={room ? room.id : YARD_ID}
       onClick={onClick}
       onPointerDown={editable ? (e) => startDrag(e, 'move') : undefined}
-      onPointerEnter={custom ? () => setHovered(true) : undefined}
-      onPointerLeave={custom ? () => setHovered(false) : undefined}
+      onPointerEnter={() => (setHover(f.id), custom && setHovered(true))}
+      onPointerLeave={() => (setHover(null), custom && setHovered(false))}
     >
       {custom ? (
         // slots go inside the art's own canvas, so the TV picture stays on the drawn screen whatever shape the box is

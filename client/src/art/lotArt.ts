@@ -1,5 +1,5 @@
 /**
- * Everything around the rooms: ground, soil, fence, tree, the house shell and
+ * Everything around the rooms: ground, soil, a tree, the house shell and
  * the roof. Replaceable as a whole with hand-drawn art (manifest: house.shell).
  */
 import { type Geometry, ROOF_H } from '../model/layout';
@@ -34,33 +34,12 @@ export function drawLot(geo: Geometry, seed = 7): P[] {
 
   /* ground */
   p.rect(-5000, groundY, lot.w + 10000, lot.h - groundY + 3000, { fill: 'var(--soil)', stroke: 'none', roughness: 0 });
-  for (let i = 0; i < 70; i++) {
+  for (let i = 0; i < 22; i++) {
     const x = -700 + rand() * (lot.w + 1400);
     const y = groundY + 26 + rand() * (lot.h - groundY - 30);
     if (x > body.x - 14 && x < right + 14 && y < body.y + body.h + 10) continue;
     p.ellipse(x, y, 7 + rand() * 12, 4 + rand() * 5, { fill: 'var(--soil-dark)', stroke: 'none', roughness: 0.6 });
   }
-  // a little something buried on each side
-  p.ellipse(body.x - 150, Math.min(lot.h - 40, groundY + 120), 34, 18, { fill: '#E4DAD0', strokeWidth: 1.2 });
-  const tx0 = right + 120;
-  const ty0 = Math.min(lot.h - 60, groundY + 140);
-  p.rect(tx0, ty0, 38, 24, { fill: C.walnut, strokeWidth: 1.2 });
-  p.rect(tx0 + 14, ty0 + 8, 10, 9, { fill: C.mustard, strokeWidth: 1 });
-
-  /* fence behind the yard */
-  const fenceTop = groundY - 46;
-  const runs: [number, number][] = [
-    [-460, body.x - 196],
-    [right + 168, lot.w + 460],
-  ];
-  for (const [from, to] of runs) {
-    p.line(from, fenceTop + 15, to, fenceTop + 15, { strokeWidth: 4, stroke: 'var(--fence-line)', roughness: 0.4 });
-    p.line(from, fenceTop + 34, to, fenceTop + 34, { strokeWidth: 4, stroke: 'var(--fence-line)', roughness: 0.4 });
-    for (let x = from + 6; x < to - 8; x += 17) {
-      p.poly([[x, groundY], [x, fenceTop + 6], [x + 5.5, fenceTop], [x + 11, fenceTop + 6], [x + 11, groundY]], { fill: 'var(--fence)', stroke: 'var(--fence-line)', strokeWidth: 1.1, roughness: 0.5 });
-    }
-  }
-
   /* tree */
   const tx = right + 212;
   p.path(`M${tx - 10},${groundY} L${tx - 6},${groundY - 112} L${tx + 8},${groundY - 112} L${tx + 12},${groundY} Z`, { fill: 'var(--trunk)', stroke: 'var(--trunk-line)' });
@@ -80,7 +59,7 @@ export function drawLot(geo: Geometry, seed = 7): P[] {
   p.rect(-5000, groundY - 5, lot.w + 10000, 13, { fill: 'var(--grass)', stroke: 'none', roughness: 0 });
   p.line(-5000, groundY - 5, body.x, groundY - 5, { strokeWidth: 1.4, roughness: 0.3, stroke: 'var(--leaf-line)' });
   p.line(right, groundY - 5, lot.w + 5000, groundY - 5, { strokeWidth: 1.4, roughness: 0.3, stroke: 'var(--leaf-line)' });
-  for (let i = 0; i < 16; i++) {
+  for (let i = 0; i < 7; i++) {
     const x = -520 + rand() * (lot.w + 1040);
     if (x > body.x - 24 && x < right + 24) continue;
     tuft(p, x, groundY - 4, 0.7 + rand() * 0.5);
@@ -119,22 +98,10 @@ export function drawLot(geo: Geometry, seed = 7): P[] {
     if (iMax - iMin < 1) continue;
     rows.push({ y, from: roof.apex.x + shift + iMin * 2 * R, to: roof.apex.x + shift + iMax * 2 * R, odd });
   }
-  // a few tiles a shade deeper, under the lines
-  for (let k = 1; k < rows.length; k++) {
-    const row = rows[k];
-    const up = rows[k - 1];
-    const n = Math.round((row.to - row.from) / (2 * R));
-    for (let i = 0; i < n; i++) {
-      if (rand() > 0.13) continue;
-      const x = row.from + i * 2 * R;
-      if (x + R < up.from || x + R > up.to) continue;
-      p.path(`M${x},${row.y} A${R},${R} 0 0 0 ${x + 2 * R},${row.y} A${R},${R} 0 0 1 ${x + R},${row.y - R} A${R},${R} 0 0 1 ${x},${row.y} Z`, { fill: 'var(--roof-2)', stroke: 'none', roughness: 0.2 });
-    }
-  }
   for (const row of rows) {
     let d = `M${row.from},${row.y}`;
     for (let x = row.from; x < row.to - 1; x += 2 * R) d += ` a${R},${R} 0 0 0 ${2 * R},0`;
-    p.path(d, { stroke: 'var(--roof-line)', strokeWidth: 1.5, roughness: 0.35, bowing: 0.4 });
+    p.path(d, { stroke: 'var(--roof-line)', strokeWidth: 1.1, roughness: 0.35, bowing: 0.4 });
   }
   p.rect(roof.left.x - 5, roof.left.y - 6, roof.right.x - roof.left.x + 10, 13, { fill: 'var(--frame)', stroke: INK, strokeWidth: 1.8 }); // eave beam
 

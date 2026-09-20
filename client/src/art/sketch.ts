@@ -9,10 +9,10 @@ import rough from 'roughjs';
 import type { Options } from 'roughjs/bin/core';
 
 /** The structural line: house frame, room edges, anything without a fill of its own. */
-export const INK = '#2E2430';
+export const INK = '#5A4A55';
 
 /** Thin lines get a little heavier so they still read from the street. */
-const WEIGHT = 1.22;
+const WEIGHT = 1;
 
 /** One SVG path, ready to render. */
 export interface P {
@@ -192,12 +192,12 @@ export function outlineFor(fill: string): string {
     let [h, s] = hsl;
     const l = hsl[2];
     if (l < 0.36) out = INK;
-    else if (l > 0.9 || s < 0.16) out = '#7B625A';
+    else if (l > 0.9 || s < 0.16) out = '#A08C84';
     else {
       if (h >= 22 && h <= 70) h = 17 + (h - 22) * 0.42;
       const blue = h > 180 && h < 280;
-      s = Math.min(blue ? 0.42 : 0.6, s * 0.9 + 0.06);
-      out = fromHsl(h, s, Math.max(0.22, Math.min(0.34, l * 0.43)));
+      s = Math.min(blue ? 0.34 : 0.46, s * 0.8);
+      out = fromHsl(h, s, Math.max(0.34, Math.min(0.46, l * 0.56)));
     }
   }
   if (outlines.size > 600) outlines.clear();

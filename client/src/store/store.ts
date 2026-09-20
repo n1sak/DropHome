@@ -46,7 +46,8 @@ interface Prefs {
 }
 
 function loadPrefs(): Prefs {
-  const base: Prefs = { scene: 'auto', sound: true, hintsSeen: false };
+  // the first-run hint bar is off: the house should be the only thing asking for attention
+  const base: Prefs = { scene: 'auto', sound: true, hintsSeen: true };
   try {
     return { ...base, ...(JSON.parse(localStorage.getItem('roomy.prefs') ?? '{}') as Partial<Prefs>) };
   } catch {
@@ -81,6 +82,9 @@ export interface AppState {
 
   previewId: string | null;
   highlightId: string | null;
+  /** The piece of furniture under the pointer: its name tag shows only then. */
+  hoverId: string | null;
+  setHover: (id: string | null) => void;
   moveIds: string[] | null;
   dialog: Dialog;
   toasts: Toast[];
@@ -235,6 +239,8 @@ export const useApp = create<AppState>((set, get) => {
     prefs: loadPrefs(),
     previewId: null,
     highlightId: null,
+    hoverId: null,
+    setHover: (id) => get().hoverId !== id && set({ hoverId: id }),
     moveIds: null,
     dialog: null,
     toasts: [],

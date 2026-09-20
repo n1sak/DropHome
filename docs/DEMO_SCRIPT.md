@@ -16,7 +16,7 @@ Have a folder of six to ten of your own messy files ready on the desktop: a reci
 | 1:04 | Press `/`, type a word from one of your files, hit Enter | "When I need something, I do not search. I ask, and the house walks me there." |
 | 1:14 | Living room. Pin a photo from the coffee table. Show it appear on the wall and the TV | "Pin a photo and it goes up on the wall and plays on the TV. Pin a grocery list and it is on the fridge." |
 | 1:24 | Switch to night | "At night, the lights are on in the rooms I have actually been using. One look tells me where my week went." |
-| 1:32 | Spring clean. Tick through the list, press Tidy, watch files fly to the attic | "And when things gather dust, spring cleaning boxes them up and takes them to the attic." |
+| 1:32 | Open the ••• menu and pick Spring clean. Tick through the list, press Tidy, watch files fly to the attic | "And when things gather dust, spring cleaning boxes them up and takes them to the attic." |
 | 1:42 | Renovate. The house turns into a blueprint. Add a floor, build an Office, drag a desk | "It is your house, so you design it. Every room follows the same grammar, so the sorting still works in a room I just invented." |
 | 1:54 | Done. Back to the full house, in daylight | "Folders made us file clerks. DropHome lets you just put things where they belong." |
 

@@ -1,5 +1,5 @@
 /**
- * The house palette. Warm and flat: coral, salmon, pink and peach, tan wood,
+ * The house palette. Warm, flat and pale: coral, salmon, pink and peach, tan wood,
  * mustard, a lime green for anything that grows, and periwinkle and denim as the
  * only cool notes. Walls stay close to white so the furniture carries the colour.
  *
@@ -9,50 +9,50 @@
  */
 export const C = {
   /* wood */
-  oak: '#EDCB94',
-  oakDark: '#DDA968',
-  walnut: '#C48D61',
-  walnutDark: '#9A6642',
-  pine: '#F6E0B5',
+  oak: '#F1D6AA',
+  oakDark: '#E5BC88',
+  walnut: '#D2A47F',
+  walnutDark: '#B18463',
+  pine: '#F8E6C3',
 
   /* neutrals */
   white: '#FFFDF8',
   cream: '#FCEFD9',
-  steel: '#E1E3EE',
-  steelDark: '#A3A9C2',
-  charcoal: '#5A4B5E',
-  night: '#3B3043',
+  steel: '#E8EAF3',
+  steelDark: '#B4B9CE',
+  charcoal: '#7A6C7E',
+  night: '#57495E',
 
   /* colour */
-  coral: '#E9635C',
-  salmon: '#F48E84',
-  pink: '#F7AEBB',
-  blush: '#FBD5D8',
-  peach: '#F6BD9B',
-  rose: '#DC7F98',
-  mustard: '#F4C45F',
-  peri: '#B3BEE8',
-  denim: '#7486C2',
-  leaf: '#93CB55',
-  leafDark: '#5F9E3B',
-  red: '#DD4F4C',
+  coral: '#EE8A82',
+  salmon: '#F6A69C',
+  pink: '#F9C2CB',
+  blush: '#FCE1E2',
+  peach: '#F8CDB2',
+  rose: '#E59CAE',
+  mustard: '#F6D48A',
+  peri: '#C7CFEE',
+  denim: '#97A5D2',
+  leaf: '#AED581',
+  leafDark: '#7FB35A',
+  red: '#E5736F',
 
   /* things */
   paper: '#FFFDF6',
   paperPink: '#FFE8E4',
-  cork: '#E6B981',
-  card: '#E5BD88',
-  cardDark: '#D1A06A',
-  lamp: '#FFDB7A',
-  cavity: '#7A5443',
+  cork: '#EDC99B',
+  card: '#EBCBA0',
+  cardDark: '#DDB688',
+  lamp: '#FFE39A',
+  cavity: '#9A7562',
   soil: '#8A6247',
-  screen: '#CFE0F5',
+  screen: '#DCE8F7',
   glass: 'var(--glass)',
 } as const;
 
 /** Beams, outer walls and the slabs between floors. */
-export const FRAME = '#9A6642';
-export const FRAME_DARK = '#7D5034';
+export const FRAME = '#B58A66';
+export const FRAME_DARK = '#9A7150';
 
-/** Spines on a shelf, clothes on a rail, jars in a pantry. */
-export const BOOKS: string[] = [C.coral, C.denim, C.peri, C.mustard, C.rose, C.leaf, C.walnut, C.cream, C.pink, C.salmon, C.peach];
+/** Spines on a shelf. Kept short on purpose: a shelf in a few colours reads as a shelf, a shelf in eleven reads as noise. */
+export const BOOKS: string[] = [C.coral, C.peri, C.mustard, C.pink, C.cream, C.leaf];

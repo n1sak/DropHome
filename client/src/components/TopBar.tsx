@@ -44,15 +44,15 @@ export function TopBar({ night }: { night: boolean }) {
         <SearchBox />
 
         <div className="topbar-actions">
-          <span className="meter" title={storeKind === 'server' ? 'Stored on the DropHome server' : 'Stored in this browser'}>
-            {live.length} things · {prettySize(bytes)}
-          </span>
-          <button className="bar-btn" onClick={() => app.setDialog('clean')} title="Spring cleaning">
-            <Icon name="broom" /> <span>Spring clean</span>
-          </button>
-          <button className={`bar-btn${renovate ? ' is-on' : ''}`} onClick={() => app.setRenovate(!renovate)} aria-pressed={renovate} title="Design your house">
-            <Icon name="ruler" /> <span>{renovate ? 'Done' : 'Renovate'}</span>
-          </button>
+          {renovate ? (
+            <button className="bar-btn is-on" onClick={() => app.setRenovate(false)} aria-pressed="true" title="Finish renovating">
+              <Icon name="ruler" /> <span>Done</span>
+            </button>
+          ) : (
+            <button className="icon-btn" onClick={() => app.setRenovate(true)} aria-pressed="false" aria-label="Renovate: design your house" title="Renovate">
+              <Icon name="ruler" />
+            </button>
+          )}
           <button className="icon-btn" onClick={() => app.setScene(night ? 'day' : 'night')} aria-label={night ? 'Switch to daytime' : 'Switch to night'} title={night ? 'Daytime' : 'Night'}>
             <Icon name={night ? 'sun' : 'moon'} />
           </button>
@@ -62,6 +62,9 @@ export function TopBar({ night }: { night: boolean }) {
             </button>
             {menu && (
               <div className="menu menu-bar" role="menu">
+                <button role="menuitem" onClick={() => (setMenu(false), app.setDialog('clean'))}>
+                  <Icon name="broom" size={16} /> Spring clean
+                </button>
                 <button role="menuitem" onClick={() => (setMenu(false), app.setDialog('about'))}>
                   <Icon name="info" size={16} /> How DropHome works
                 </button>
@@ -71,6 +74,9 @@ export function TopBar({ night }: { night: boolean }) {
                 <button role="menuitem" onClick={() => (setMenu(false), app.setScene('auto'))}>
                   <Icon name="clock" size={16} /> Follow my device theme
                 </button>
+                <p className="menu-note" title={storeKind === 'server' ? 'Stored on the DropHome server' : 'Stored in this browser'}>
+                  {live.length} things · {prettySize(bytes)}
+                </p>
                 <hr />
                 {/* both of these erase everything, so they ask twice (window.confirm is blocked in sandboxed pages) */}
                 <button role="menuitem" className={confirming === 'samples' ? 'is-danger' : ''} onClick={() => (confirming === 'samples' ? (setMenu(false), void app.resetDemo(true)) : setConfirming('samples'))}>

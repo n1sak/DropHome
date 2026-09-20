@@ -2,7 +2,7 @@
 
 ## The built-in style
 
-Everything you see in DropHome is drawn in code, in one style: a single slightly wobbly marker line around flat fills. The line is never plain black. It is a much darker shade of whatever it surrounds, so wood gets a brown line, a curtain a deep red one, a plant a dark green one. Only the structure of the house (frame, roof edge, room edges) uses the dark ink `#2E2430`.
+Everything you see in DropHome is drawn in code, in one style: a single slightly wobbly marker line around flat fills. The line is never plain black. It is a much darker shade of whatever it surrounds, so wood gets a brown line, a curtain a deep red one, a plant a dark green one. Only the structure of the house (frame, roof edge, room edges) uses the ink `#5A4A55`, a soft plum grey instead of black. Rooms are kept deliberately plain: a pale wall, one window, no wall patterns, and only the decoration that tells you which room it is. The furniture is the content, so nothing else competes with it.
 
 The palette is small and warm: coral, salmon, pink and peach, tan wood, mustard, a lime green for anything that grows, and periwinkle and denim as the only cool notes. Walls stay close to white so the furniture carries the colour, and the house frame is one brown.
 
@@ -144,7 +144,7 @@ Anything not listed keeps its built-in drawing, so you can replace the house one
 
 ## Making it sit well
 
-The built-in line is roughly 7 pixels on a 1600 pixel room, coloured as described at the top. Matching that weight, and outlining in a dark shade of the fill instead of black, keeps your drawings and the built-in ones from fighting while the house is half replaced.
+The built-in line is roughly 6 pixels on a 1600 pixel room, coloured as described at the top. Matching that weight, and outlining in a dark shade of the fill instead of black, keeps your drawings and the built-in ones from fighting while the house is half replaced.
 
 Draw for daylight. Night, unlit rooms and the blueprint look are overlays and filters the app adds on top, so they work on any art without extra drawings.
 

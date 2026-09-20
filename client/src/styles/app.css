@@ -10,40 +10,42 @@
   --sky-1: #cde8f4;
   --sky-2: #e3f3f9;
   --glass: #cbdaf2;
-  --grass: #a6d968;
-  --leaf: #8fcb53;
-  --leaf-light: #abdd6f;
-  --leaf-line: #3f7a2a;
-  --soil: #d9b38b;
-  --soil-dark: #c69c72;
-  --frame: #9a6642;
-  --frame-dark: #7d5034;
-  --roof: #e9635c;
-  --roof-2: #d8504f;
-  --roof-line: #8c2934;
-  --chimney: #f4c45f;
-  --chimney-line: #d9a04a;
-  --trunk: #c48d61;
-  --trunk-line: #7d5034;
+  --grass: #c4e596;
+  --leaf: #aed581;
+  --leaf-light: #c5e6a0;
+  --leaf-line: #719c52;
+  --soil: #efdcc3;
+  --soil-dark: #e6cfb1;
+  --frame: #b58a66;
+  --frame-dark: #9a7150;
+  --roof: #ee8a82;
+  --roof-2: #e67a74;
+  --roof-line: #c46a68;
+  --chimney: #f6d48a;
+  --chimney-line: #e5bc88;
+  --trunk: #d2a47f;
+  --trunk-line: #9a7150;
   --yard-dim: none;
   --fence: #fffdf8;
   --fence-line: #7b625a;
-  --orb: #f8cb62;
-  --orb-line: #b9822a;
+  --orb: #f9d98a;
+  --orb-line: #d9a953;
   --orb-glow: rgba(255, 238, 178, 0.8);
   --cloud: 1;
-  --cloud-line: #2e2430;
+  --cloud-line: #8a7a86;
   --stars: 0;
   --shade-color: #7a4a2e;
-  --shade-unlit: 0.1;
+  --shade-unlit: 0.05;
   --shade-lit: 0;
   --glow-lit: 0;
 
   /* the drawings keep their own line colour in both themes */
-  --art-ink: #2e2430;
+  --art-ink: #5a4a55;
 
   /* the interface */
   --ink: #2e2430;
+  --soft-ink: rgba(46, 36, 48, 0.28);
+  --edge: rgba(46, 36, 48, 0.45);
   --paper: #fff8ef;
   --panel: #fffdf9;
   --panel-2: #fbeee1;
@@ -59,7 +61,7 @@
   --good: #3b8436;
   --label-bg: rgba(255, 253, 249, 0.94);
   --scrim: rgba(46, 30, 40, 0.5);
-  --drop: 3px 4px 0 rgba(46, 36, 48, 0.2);
+  --drop: 0 4px 14px rgba(46, 36, 48, 0.12);
   --blueprint: #1d4c9e;
 
   --hand: 'Architects Daughter', 'Segoe Print', 'Bradley Hand', 'Comic Sans MS', cursive;
@@ -103,6 +105,8 @@
     --shade-lit: 0.16;
     --glow-lit: 0.55;
     --ink: #e6d9dc;
+    --soft-ink: rgba(230, 217, 220, 0.3);
+    --edge: rgba(230, 217, 220, 0.45);
     --paper: #1d1726;
     --panel: #281f33;
     --panel-2: #33283f;
@@ -116,7 +120,7 @@
     --good: #8fd67f;
     --label-bg: rgba(40, 31, 51, 0.94);
     --scrim: rgba(10, 6, 16, 0.66);
-    --drop: 3px 4px 0 rgba(0, 0, 0, 0.45);
+    --drop: 0 4px 14px rgba(0, 0, 0, 0.4);
   }
 }
 
@@ -154,6 +158,8 @@
   --shade-lit: 0.16;
   --glow-lit: 0.55;
   --ink: #e6d9dc;
+  --soft-ink: rgba(230, 217, 220, 0.3);
+  --edge: rgba(230, 217, 220, 0.45);
   --paper: #1d1726;
   --panel: #281f33;
   --panel-2: #33283f;
@@ -167,7 +173,7 @@
   --good: #8fd67f;
   --label-bg: rgba(40, 31, 51, 0.94);
   --scrim: rgba(10, 6, 16, 0.66);
-  --drop: 3px 4px 0 rgba(0, 0, 0, 0.45);
+  --drop: 0 4px 14px rgba(0, 0, 0, 0.4);
 }
 
 *,
@@ -452,7 +458,7 @@ svg.room-edge polygon {
   opacity: 0;
 }
 .app:not(.level-house) .room:not(.is-focus) .room-shade {
-  opacity: calc(var(--shade-unlit) + 0.22);
+  opacity: calc(var(--shade-unlit) + 0.12);
 }
 .room-glow {
   background: radial-gradient(ellipse at 50% 18%, rgba(255, 211, 107, 0.62), rgba(255, 211, 107, 0) 68%);
@@ -687,13 +693,13 @@ svg.room-edge polygon {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  border: 1.5px solid var(--ink);
+  border: 1px solid var(--soft-ink);
   border-radius: var(--wobble);
   background: var(--label-bg);
   color: var(--text);
   font: 400 13px/1.1 var(--hand);
   padding: 4px 9px 3px;
-  box-shadow: 2px 2px 0 rgba(46, 36, 48, 0.28);
+  box-shadow: 0 1px 4px rgba(46, 36, 48, 0.12);
   white-space: nowrap;
   transition: transform 0.15s ease, background 0.15s ease;
 }
@@ -763,6 +769,33 @@ svg.room-edge polygon {
 .tag:focus-visible .tag-hint {
   display: block;
 }
+/* With a mouse the house stays quiet: counts and furniture tags appear for whatever is under the pointer.
+   Touch screens keep them, since there is no hover to reveal them. */
+@media (hover: hover) and (min-width: 760px) {
+  .plate-count {
+    display: none;
+  }
+  .plate:hover .plate-count,
+  .plate:focus-visible .plate-count {
+    display: inline-block;
+  }
+  .tag {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.18s ease;
+  }
+  .tag:not(.has-files) {
+    opacity: 0;
+  }
+  .tag.is-hot,
+  .tag:focus-visible {
+    opacity: 1;
+    z-index: 3;
+  }
+  .tag.is-hot .tag-hint {
+    display: block;
+  }
+}
 .tag.is-selected {
   background: #ffb400;
   color: var(--art-ink);
@@ -798,7 +831,7 @@ svg.room-edge polygon {
   background: color-mix(in srgb, var(--panel) 88%, transparent);
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
-  border-bottom: 1.5px solid var(--ink);
+  border-bottom: 1px solid var(--edge);
 }
 
 .brand {
@@ -841,12 +874,12 @@ svg.room-edge polygon {
   align-items: center;
   justify-content: center;
   gap: 7px;
-  border: 1.5px solid var(--ink);
+  border: 1.2px solid var(--edge);
   border-radius: var(--wobble);
   background: var(--panel);
   color: var(--text);
   font: 600 13px/1 var(--ui);
-  box-shadow: 2px 2px 0 var(--ink);
+  box-shadow: 0 1px 0 var(--soft-ink);
   transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
   white-space: nowrap;
 }
@@ -867,20 +900,20 @@ svg.room-edge polygon {
 .bar-btn:hover,
 .btn:hover {
   transform: translate(-1px, -1px);
-  box-shadow: 3px 3px 0 var(--ink);
+  box-shadow: 0 2px 0 var(--soft-ink);
   background: var(--panel-2);
 }
 .icon-btn:active,
 .bar-btn:active,
 .btn:active {
   transform: translate(1px, 1px);
-  box-shadow: 1px 1px 0 var(--ink);
+  box-shadow: 0 0 0 var(--soft-ink);
 }
 .btn:disabled {
   opacity: 0.45;
   cursor: not-allowed;
   transform: none;
-  box-shadow: 2px 2px 0 var(--ink);
+  box-shadow: 0 1px 0 var(--soft-ink);
 }
 .btn-primary {
   background: var(--accent);
@@ -936,10 +969,10 @@ svg.room-edge polygon {
   align-items: center;
   gap: 6px;
   padding: 3px 12px 3px 4px;
-  border: 1.5px solid var(--ink);
+  border: 1.2px solid var(--edge);
   border-radius: var(--wobble);
   background: var(--label-bg);
-  box-shadow: 2px 2px 0 rgba(46, 36, 48, 0.28);
+  box-shadow: 0 1px 4px rgba(46, 36, 48, 0.12);
   font: 400 14px/1 var(--hand);
   max-width: calc(100% - 32px);
 }
@@ -990,7 +1023,7 @@ svg.room-edge polygon {
   gap: 8px;
   height: 38px;
   padding: 0 10px 0 12px;
-  border: 1.5px solid var(--ink);
+  border: 1.2px solid var(--edge);
   border-radius: var(--wobble);
   background: var(--panel);
   color: var(--text-dim);
@@ -1020,7 +1053,7 @@ svg.room-edge polygon {
   right: 0;
   min-width: 300px;
   padding: 6px;
-  border: 1.5px solid var(--ink);
+  border: 1.2px solid var(--edge);
   border-radius: 14px;
   background: var(--panel);
   box-shadow: var(--drop);
@@ -1425,10 +1458,10 @@ svg.room-edge polygon {
   width: min(60%, max(420px, 100% - 420px));
   display: flex;
   flex-direction: column;
-  border: 1.5px solid var(--ink);
+  border: 1.2px solid var(--edge);
   border-radius: 18px 20px 17px 21px / 20px 17px 21px 18px;
   background: var(--panel);
-  box-shadow: 5px 6px 0 rgba(46, 36, 48, 0.25);
+  box-shadow: 0 8px 28px rgba(46, 36, 48, 0.18);
   overflow: hidden;
   animation: panel-in 0.5s 0.22s var(--ease-out) both;
 }
@@ -1476,7 +1509,7 @@ svg.room-edge polygon {
 .field input,
 .field textarea,
 .field select {
-  border: 1.5px solid var(--ink);
+  border: 1.2px solid var(--edge);
   border-radius: 10px;
   background: var(--panel);
   padding: 6px 8px;
@@ -1494,19 +1527,19 @@ svg.room-edge polygon {
   flex: 1;
   overflow: auto;
   padding: 22px 20px 26px;
-  border-top: 1.5px solid var(--ink);
-  border-bottom: 1.5px solid var(--ink);
-  background-color: #e3b780;
-  background-image: repeating-linear-gradient(90deg, rgba(116, 73, 47, 0.16) 0 2px, transparent 2px 120px), repeating-linear-gradient(0deg, rgba(116, 73, 47, 0.1) 0 1px, transparent 1px 38px);
+  border-top: 1px solid var(--edge);
+  border-bottom: 1px solid var(--edge);
+  background-color: #f5e3c6;
+  background-image: repeating-linear-gradient(90deg, rgba(116, 73, 47, 0.08) 0 2px, transparent 2px 120px), repeating-linear-gradient(0deg, rgba(116, 73, 47, 0.06) 0 1px, transparent 1px 38px);
 }
 /* what you are looking into changes the surface the files lie on */
 .panel-archive .panel-body,
 .panel-reference .panel-body {
-  background-color: #a8714f;
-  background-image: repeating-linear-gradient(0deg, rgba(40, 24, 12, 0.34) 0 7px, transparent 7px 196px);
+  background-color: #dcc0a4;
+  background-image: repeating-linear-gradient(0deg, rgba(120, 84, 60, 0.3) 0 5px, transparent 7px 196px);
 }
 .panel-display .panel-body {
-  background-color: #e0b179;
+  background-color: #f1dab5;
   background-image: radial-gradient(rgba(116, 73, 47, 0.35) 1px, transparent 1.6px);
   background-size: 9px 9px;
 }
@@ -1525,10 +1558,10 @@ svg.room-edge polygon {
   background-size: 34px 34px;
 }
 .panel-memories .panel-body {
-  background: #c9785f;
+  background: #f1c4b6;
 }
 .panel-media .panel-body {
-  background: #6b4a63;
+  background: #a58fa2;
 }
 .panel-vault .panel-body,
 .panel-backup .panel-body,
@@ -1540,15 +1573,15 @@ svg.room-edge polygon {
   background-image: repeating-linear-gradient(45deg, rgba(150, 110, 60, 0.22) 0 3px, transparent 3px 10px), repeating-linear-gradient(-45deg, rgba(150, 110, 60, 0.22) 0 3px, transparent 3px 10px);
 }
 .panel-trash .panel-body {
-  background: #7f9a62;
+  background: #bdd3a6;
 }
 .panel-inbox .panel-body {
-  background-color: #ddab73;
-  background-image: repeating-linear-gradient(0deg, rgba(90, 56, 30, 0.35) 0 2px, transparent 2px 46px);
+  background-color: #efd9b6;
+  background-image: repeating-linear-gradient(0deg, rgba(90, 56, 30, 0.14) 0 2px, transparent 2px 46px);
 }
 .panel-recent .panel-body,
 .panel-shared .panel-body {
-  background-color: #b57d58;
+  background-color: #e2c6a8;
   background-image: repeating-linear-gradient(90deg, rgba(40, 24, 12, 0.16) 0 2px, transparent 2px 140px);
 }
 
@@ -1727,7 +1760,7 @@ svg.room-edge polygon {
   z-index: 90;
   min-width: 190px;
   padding: 6px;
-  border: 1.5px solid var(--ink);
+  border: 1.2px solid var(--edge);
   border-radius: 14px;
   background: var(--panel);
   box-shadow: var(--drop);
@@ -1760,6 +1793,11 @@ svg.room-edge polygon {
 .menu .is-danger {
   color: var(--danger);
 }
+.menu-note {
+  margin: 6px 12px 4px;
+  font: 12px var(--mono);
+  color: var(--text-dim);
+}
 .menu hr {
   border: 0;
   border-top: 1.5px dashed var(--line);
@@ -1778,10 +1816,10 @@ svg.room-edge polygon {
 }
 .preview,
 .dialog {
-  border: 1.5px solid var(--ink);
+  border: 1.2px solid var(--edge);
   border-radius: 20px 18px 21px 17px / 17px 21px 18px 20px;
   background: var(--panel);
-  box-shadow: 6px 8px 0 rgba(10, 14, 30, 0.35);
+  box-shadow: 0 10px 36px rgba(10, 14, 30, 0.3);
   overflow: hidden;
   animation: lift 0.3s var(--ease-out);
 }
@@ -1996,7 +2034,7 @@ svg.room-edge polygon {
   white-space: pre-wrap;
   background: #fffdf6;
   color: var(--art-ink);
-  border: 1.5px solid var(--ink);
+  border: 1.2px solid var(--edge);
   border-radius: 8px;
 }
 .view-audio audio {
@@ -2047,7 +2085,7 @@ svg.room-edge polygon {
   justify-content: flex-end;
   gap: 10px;
   padding: 14px 20px;
-  border-top: 1.5px solid var(--ink);
+  border-top: 1px solid var(--edge);
   background: var(--panel-2);
 }
 .empty-note {
@@ -2129,11 +2167,11 @@ svg.room-edge polygon {
   display: grid;
   gap: 1px;
   text-align: left;
-  border: 1.5px solid var(--ink);
+  border: 1.2px solid var(--edge);
   border-radius: var(--wobble);
   background: var(--panel);
   padding: 9px 12px;
-  box-shadow: 2px 2px 0 var(--ink);
+  box-shadow: 0 1px 0 var(--soft-ink);
 }
 .move-spot:hover:not(:disabled) {
   background: var(--lamp);
@@ -2199,7 +2237,7 @@ svg.room-edge polygon {
   height: 26px;
   display: grid;
   place-items: center;
-  border: 1.5px solid var(--ink);
+  border: 1.2px solid var(--edge);
   border-radius: 8px;
   background: var(--panel);
   color: var(--text);
@@ -2215,7 +2253,7 @@ svg.room-edge polygon {
   left: 16px;
   bottom: 16px;
   padding: 10px 12px 8px;
-  border: 1.5px solid var(--ink);
+  border: 1.2px solid var(--edge);
   border-radius: var(--wobble);
   background: var(--label-bg);
   box-shadow: var(--drop);
@@ -2253,7 +2291,7 @@ svg.room-edge polygon {
   justify-content: center;
   gap: 10px;
   padding: 7px 8px 7px 16px;
-  border: 1.5px solid var(--ink);
+  border: 1.2px solid var(--edge);
   border-radius: 26px 24px 27px 23px / 24px 27px 23px 26px;
   background: var(--label-bg);
   box-shadow: var(--drop);
@@ -2303,7 +2341,7 @@ svg.room-edge polygon {
 .pill-progress {
   width: 120px;
   height: 8px;
-  border: 1.5px solid var(--ink);
+  border: 1.2px solid var(--edge);
   border-radius: 8px;
   overflow: hidden;
   background: var(--panel);
@@ -2335,7 +2373,7 @@ svg.room-edge polygon {
   align-items: center;
   gap: 10px;
   padding: 9px 8px 9px 16px;
-  border: 1.5px solid var(--ink);
+  border: 1.2px solid var(--edge);
   border-radius: var(--wobble);
   background: var(--panel);
   box-shadow: var(--drop);
@@ -2359,7 +2397,7 @@ svg.room-edge polygon {
   }
 }
 .toast-action {
-  border: 1.5px solid var(--ink);
+  border: 1.2px solid var(--edge);
   border-radius: 9px;
   background: var(--lamp);
   color: var(--lamp-ink);
@@ -2410,7 +2448,7 @@ svg.room-edge polygon {
   top: 30px;
   white-space: nowrap;
   padding: 4px 10px;
-  border: 1.5px solid var(--ink);
+  border: 1.2px solid var(--edge);
   border-radius: var(--wobble);
   background: var(--lamp);
   color: var(--lamp-ink);
@@ -2468,7 +2506,7 @@ body.is-dragging-file * {
 .splash-bar {
   width: 220px;
   height: 10px;
-  border: 1.5px solid var(--ink);
+  border: 1.2px solid var(--edge);
   border-radius: 8px;
   overflow: hidden;
   background: var(--panel);
@@ -2758,7 +2796,7 @@ body.is-dragging-file * {
     gap: 8px;
     align-content: start;
     background: var(--paper);
-    border-top: 1.5px solid var(--ink);
+    border-top: 1px solid var(--edge);
   }
   .roomshelf-purpose {
     color: var(--text-dim);
@@ -2770,11 +2808,11 @@ body.is-dragging-file * {
     grid-template-columns: 1fr auto;
     gap: 1px 10px;
     text-align: left;
-    border: 1.5px solid var(--ink);
+    border: 1.2px solid var(--edge);
     border-radius: var(--wobble);
     background: var(--panel);
     padding: 9px 12px;
-    box-shadow: 2px 2px 0 var(--ink);
+    box-shadow: 0 1px 0 var(--soft-ink);
   }
   .roomshelf b {
     font: 400 17px/1.1 var(--hand);
@@ -2824,7 +2862,7 @@ body.is-dragging-file * {
   }
   .preview-side {
     border-left: 0;
-    border-top: 1.5px solid var(--ink);
+    border-top: 1px solid var(--edge);
   }
   .preview-close {
     position: absolute;

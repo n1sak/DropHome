@@ -164,12 +164,11 @@ function spines(p: Pen, rand: () => number, x: number, baseY: number, w: number,
     const bw = Math.min(end - cx, o.minW + rand() * (o.maxW - o.minW));
     const bh = maxH * (0.62 + rand() * 0.36);
     const color = palette[Math.floor(rand() * palette.length)];
-    if (rand() < 0.12) {
+    if (rand() < 0.2) {
       cx += bw * 0.9; // a gap on the shelf
       continue;
     }
     p.rect(cx, baseY - bh, bw, bh, { fill: color, strokeWidth: 1, roughness: 0.6 });
-    if (bw > 6) p.line(cx + 1.5, baseY - bh * 0.78, cx + bw - 1.5, baseY - bh * 0.78, { stroke: shade(color, 0.45), strokeWidth: 0.9, roughness: 0.4 });
     cx += bw + 0.6;
   }
 }
@@ -409,8 +408,8 @@ function closet(b: Builder, color = C.white, trim = C.cream) {
     p.rect(6, 14, w - 12, h - 26, { fill: C.cavity, strokeWidth: 1 });
     // rail + hanging clothes
     p.line(8, 26, w - 8, 26, { stroke: C.steel, strokeWidth: 2 });
-    const colors = [C.denim, C.coral, C.mustard, C.peri, C.rose];
-    const n = Math.max(3, Math.floor((w - 20) / 14));
+    const colors = [C.peri, C.coral, C.mustard];
+    const n = Math.max(3, Math.floor((w - 20) / 22));
     for (let i = 0; i < n; i++) {
       const cx = 12 + i * ((w - 24) / n);
       const len = h * (0.22 + ((i * 37) % 17) / 100);
@@ -450,11 +449,11 @@ function pantry(b: Builder) {
     p.rect(0, 4, w, h - 4, { fill: C.peach });
     p.rect(-3, 0, w + 6, 8, { fill: shade(C.peach, -0.1) });
     p.rect(6, 14, w - 12, h - 26, { fill: C.cavity, strokeWidth: 1 });
-    const jars = [C.mustard, C.coral, C.cream, C.leaf, C.pink, C.peri];
+    const jars = [C.mustard, C.coral, C.cream, C.leaf];
     for (let s = 0; s < 4; s++) {
       const sy = 14 + ((h - 26) / 4) * (s + 1);
       p.line(6, sy, w - 6, sy, { stroke: C.oak, strokeWidth: 2.6 });
-      const n = 3 + (s % 2);
+      const n = 2 + (s % 2);
       for (let i = 0; i < n; i++) {
         const jw = (w - 22) / n - 3;
         const jh = ((h - 26) / 4) * (0.5 + ((i + s) % 3) * 0.12);
@@ -592,19 +591,19 @@ function shelfUnit(b: Builder, o: { frame: string; back: string; shelves: number
       const base = baseY - 2;
       if (o.style === 'books') {
         if (s === 0) {
-          spines(p, b.rand, inner.x, base, inner.w * 0.55, sh - 8, { minW: 5, maxW: 10 });
+          spines(p, b.rand, inner.x, base, inner.w * 0.55, sh - 8, { minW: 9, maxW: 15 });
           p.circle(inner.x + inner.w * 0.78, base - 10, 18, { fill: C.peri, strokeWidth: 1 }); // globe
           p.line(inner.x + inner.w * 0.78, base - 1, inner.x + inner.w * 0.78, base, { strokeWidth: 2 });
-        } else spines(p, b.rand, inner.x, base, inner.w, sh - 8, { minW: 5, maxW: 11 });
+        } else spines(p, b.rand, inner.x, base, inner.w * (s % 2 ? 0.7 : 0.85), sh - 8, { minW: 9, maxW: 16 });
       } else if (o.style === 'albums') {
         if (s === 0) {
           p.rect(inner.x + 6, base - sh * 0.62, inner.w * 0.38, sh * 0.62, { fill: C.paper, strokeWidth: 1.1 });
           p.rect(inner.x + 10, base - sh * 0.62 + 4, inner.w * 0.38 - 8, sh * 0.62 - 12, { fill: C.peri, stroke: 'none' });
           p.rrect(inner.x + inner.w * 0.56, base - 16, 26, 16, 3, { fill: C.charcoal, strokeWidth: 1 }); // camera
           p.circle(inner.x + inner.w * 0.56 + 13, base - 8, 9, { fill: C.steel, strokeWidth: 1 });
-        } else spines(p, b.rand, inner.x, base, inner.w, sh - 8, { minW: 11, maxW: 17, palette: [C.coral, C.denim, C.walnut, C.leafDark, C.rose, C.mustard] });
+        } else spines(p, b.rand, inner.x, base, inner.w, sh - 8, { minW: 13, maxW: 20, palette: [C.coral, C.peri, C.mustard, C.pink] });
       } else if (o.style === 'tapes') {
-        const rows = Math.floor((sh - 8) / 9);
+        const rows = Math.min(3, Math.floor((sh - 8) / 9));
         for (let r = 0; r < rows; r++) {
           const tw = inner.w * (0.6 + b.rand() * 0.3);
           p.rect(inner.x + 4 + b.rand() * 6, base - 9 * (r + 1), tw, 8, { fill: r % 2 ? C.charcoal : C.night, strokeWidth: 0.8, roughness: 0.5 });
@@ -821,7 +820,6 @@ function corkboard(b: Builder) {
   b.add('board', (p) => {
     p.rect(0, 0, w, h, { fill: C.oakDark });
     p.rect(5, 5, w - 10, h - 10, { fill: C.cork, strokeWidth: 1 });
-    p.rect(5, 5, w - 10, h - 10, { fill: shade(C.cork, -0.18), fillStyle: 'dots', hachureGap: 9, fillWeight: 0.6, stroke: 'none' });
   });
   const sw = (w - 28) / 3;
   const shh = (h - 24) / 2;
@@ -833,7 +831,6 @@ function pegboard(b: Builder) {
   const { w, h } = b;
   b.add('board', (p) => {
     p.rect(0, 0, w, h, { fill: '#FBEEDC' });
-    p.rect(3, 3, w - 6, h - 6, { fill: shade('#FBEEDC', -0.25), fillStyle: 'dots', hachureGap: 11, fillWeight: 0.7, stroke: 'none' });
   });
   b.add(
     'tools',
@@ -888,7 +885,7 @@ function tv(b: Builder) {
   );
   b.add('set', (p) => {
     p.rrect(w * 0.06, 0, w * 0.88, sh, 4, { fill: C.night });
-    p.rect(w * 0.09, 4, w * 0.82, sh - 9, { fill: '#2A2233', strokeWidth: 0.8 });
+    p.rect(w * 0.09, 4, w * 0.82, sh - 9, { fill: '#4A3F52', strokeWidth: 0.8 });
     p.rect(w * 0.46, sh, w * 0.08, h * 0.08, { fill: C.charcoal, strokeWidth: 1 });
     p.rrect(w * 0.36, sh + h * 0.07, w * 0.28, 4, 2, { fill: C.charcoal, strokeWidth: 1 });
   });
@@ -1141,10 +1138,10 @@ const PIECES: Record<FurnitureKind, (b: Builder) => void> = {
   nightstand,
   dresser,
   filingCabinet,
-  bookshelf: (b) => shelfUnit(b, { frame: C.walnut, back: '#A8714F', shelves: 4, style: 'books' }),
-  albumShelf: (b) => shelfUnit(b, { frame: C.oak, back: '#C99A6B', shelves: 4, style: 'albums' }),
+  bookshelf: (b) => shelfUnit(b, { frame: C.walnut, back: '#DDB896', shelves: 4, style: 'books' }),
+  albumShelf: (b) => shelfUnit(b, { frame: C.oak, back: '#EBD2AE', shelves: 4, style: 'albums' }),
   storageShelves: (b) => shelfUnit(b, { frame: C.steelDark, back: '#EEF0F8', shelves: 4, style: 'storage' }),
-  tapeShelf: (b) => shelfUnit(b, { frame: C.walnutDark, back: '#7A5443', shelves: 4, style: 'tapes' }),
+  tapeShelf: (b) => shelfUnit(b, { frame: C.walnutDark, back: '#B9957F', shelves: 4, style: 'tapes' }),
   trunk: (b) => chest(b, { body: C.walnut, lid: shade(C.walnut, -0.1), straps: C.mustard, rounded: true, stuff: 'papers' }),
   toyChest: (b) => chest(b, { body: C.peach, lid: C.coral, stars: true, stuff: 'toys' }),
   boxes,
