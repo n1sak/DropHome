@@ -99,6 +99,7 @@ export function Stage() {
                 <div key={`${floor}:${col}`} className="room room-empty" style={{ left: r.x, top: r.y, width: r.w, height: r.h }}>
                   <SketchSvg className="room-bg" w={r.w} h={r.h} paths={drawEmptyCell(r.w, r.h, floor * 7 + col + 40)} />
                   <div className="room-shade" />
+                  <div className="room-edge" />
                 </div>
               );
             })}

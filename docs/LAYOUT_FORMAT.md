@@ -24,13 +24,13 @@ The types live in `client/src/model/types.ts`. The standard house is built in `c
 ```jsonc
 {
   "id": "study",
-  "kind": "study",            // picks the placeholder backdrop. See the list below
+  "kind": "study",            // picks the built-in backdrop. See the list below
   "name": "Study",
   "purpose": "School work: problem sets, lecture notes, essays, lab reports.",
   "floor": 1,                 // 0 ground, 1 one up, -1 below ground, or "attic"
   "col": 2,                   // left to right, from 0. Ignored for the attic
   "span": 1,                  // cells wide
-  "wall": "#D9DEF7",
+  "wall": "#EEF1FB",
   "background": "art:9f2c",   // optional: your own drawing for this room
   "furniture": [ /* Furniture */ ]
 }
@@ -38,14 +38,14 @@ The types live in `client/src/model/types.ts`. The standard house is built in `c
 
 `purpose` matters. It is shown to the person on a phone, and it is given to the sorter word for word. If you build a room called "Quantum lab", write what belongs there and new files will find it.
 
-Room kinds: `attic`, `study`, `bedroom`, `bathroom`, `kitchen`, `hall`, `living`, `workshop`, `den`, `cellar`, `office`, `studio`, `library`, `greenhouse`. The kind only chooses the placeholder backdrop and tells the built-in rules what sort of room this is. A room with its own `background` can be any kind.
+Room kinds: `attic`, `study`, `bedroom`, `bathroom`, `kitchen`, `hall`, `living`, `workshop`, `den`, `cellar`, `office`, `studio`, `library`, `greenhouse`. The kind only chooses the built-in backdrop and tells the built-in rules what sort of room this is. A room with its own `background` can be any kind.
 
 ### Furniture
 
 ```jsonc
 {
   "id": "study-desk",
-  "kind": "desk",             // picks the placeholder drawing
+  "kind": "desk",             // picks the built-in drawing
   "name": "Desk",
   "hint": "This semester's work",
   "role": "active",           // what this piece MEANS. See docs/CONCEPT.md
@@ -58,7 +58,7 @@ Room kinds: `attic`, `study`, `bedroom`, `bathroom`, `kitchen`, `hall`, `living`
 }
 ```
 
-Positions are percentages of the room so that a layout survives a change of art and a change of room width. The floor line of the placeholder rooms is at `y = 80`, and furniture that stands on the floor ends between 90 and 94.
+Positions are percentages of the room so that a layout survives a change of art and a change of room width. The floor line of the built-in rooms is at `y = 80`, and furniture that stands on the floor ends between 90 and 94.
 
 Yard furniture (`porch`, `mailbox`, `bins`) uses pixels instead, because it stands outside the grid: `x < 0` hangs off the left wall of the house, `x >= 0` off the right wall, and `y` is measured up from the ground line.
 

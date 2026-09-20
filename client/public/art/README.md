@@ -1,6 +1,6 @@
 # Your art goes here
 
-Put drawings in this folder and list them in `manifest.json` (copy `manifest.example.json` to start). Anything you do not list keeps its placeholder sketch, so the house can be replaced one drawing at a time.
+Put drawings in this folder and list them in `manifest.json` (copy `manifest.example.json` to start). Anything you do not list keeps its built-in drawing, so the house can be replaced one drawing at a time.
 
 Sizes, naming, flipbook animation and the full manifest reference are in [`docs/ART_GUIDE.md`](../../../docs/ART_GUIDE.md). Tracing templates for every room are in [`docs/art-templates`](../../../docs/art-templates).
 

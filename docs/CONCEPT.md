@@ -67,4 +67,4 @@ A real house shows you time without being asked. Roomy does the same with three 
 
 ## What comes next
 
-Hand-drawn art for every room and piece of furniture, with flipbook animations. Vision for photos, so the sorter can tell a receipt from a sunset. Shared rooms, where a roommate or a project team can walk into one room of your house. A guest view of a single room as the share page.
+Flipbook animations for the furniture, and more pieces to furnish with. Vision for photos, so the sorter can tell a receipt from a sunset. Shared rooms, where a roommate or a project team can walk into one room of your house. A guest view of a single room as the share page.

@@ -1,6 +1,16 @@
-# Art guide: putting hand-drawn rooms into Roomy
+# Art guide
 
-Everything you see in Roomy right now is a placeholder sketch drawn in code. None of the app logic knows or cares what the art looks like. A room is a rectangle with a picture behind it, and a piece of furniture is a smaller rectangle with a closed picture and an open picture. Replace the pictures and you have a different house.
+## The built-in style
+
+Everything you see in Roomy is drawn in code, in one style: a single slightly wobbly marker line around flat fills. The line is never plain black. It is a much darker shade of whatever it surrounds, so wood gets a brown line, a curtain a deep red one, a plant a dark green one. Only the structure of the house (frame, roof edge, room edges) uses the dark ink `#2E2430`.
+
+The palette is small and warm: coral, salmon, pink and peach, tan wood, mustard, a lime green for anything that grows, and periwinkle and denim as the only cool notes. Walls stay close to white so the furniture carries the colour, and the house frame is one brown.
+
+To change the look, there are three files. `client/src/art/palette.ts` has every colour. `client/src/art/sketch.ts` is the pen: line weight, wobble, and the rule that turns a fill into its outline colour. `client/src/styles/app.css` starts with the sky, roof, grass and interface colours for day and night. Furniture is in `furnitureArt.ts`, one short function per piece, and rooms are in `roomArt.ts`.
+
+## Putting your own drawings in
+
+None of the app logic knows or cares what the art looks like. A room is a rectangle with a picture behind it, and a piece of furniture is a smaller rectangle with a closed picture and an open picture. Replace the pictures and you have a different house.
 
 There are three ways to get drawings in, from quickest to most complete.
 
@@ -52,11 +62,11 @@ There are three ways to make a piece move, and you can mix them on one piece.
 | `rise` | Hidden low, rises into view. Use with `"behind": true` | Papers peeking out of an open drawer or trunk |
 | `fade-in`, `fade-out` | Appears or disappears | Lamp light, a glow, a screen turning on |
 
-If a ready-made movement is not right, give the layer your own `open` (and optionally `closed`) CSS transform and an `origin`, for example `"open": "rotate(-35deg)", "origin": "12% 90%"`. Everything eases with a slight overshoot, the same as the placeholder furniture, and `delay` (milliseconds) staggers layers so two doors do not move in lockstep.
+If a ready-made movement is not right, give the layer your own `open` (and optionally `closed`) CSS transform and an `origin`, for example `"open": "rotate(-35deg)", "origin": "12% 90%"`. Everything eases with a slight overshoot, the same as the built-in furniture, and `delay` (milliseconds) staggers layers so two doors do not move in lockstep.
 
 **A flipbook.** For real hand-drawn animation: three to six frames on the same canvas, first frame closed, last frame open. Roomy plays them forward when the piece opens and backward when it closes, at 10 frames a second unless you say otherwise. Animating on twos like this suits the drawn look better than a smooth tween would. The frames have to be yours: Roomy can move and blend your drawings, but it does not invent in-between drawings in your style.
 
-Hovering a piece plays its animation, and so does opening it, exactly like the placeholder furniture.
+Hovering a piece plays its animation, and so does opening it, exactly like the built-in furniture.
 
 ### Live content on top of your art
 
@@ -64,7 +74,7 @@ Some pieces show real files on top of the drawing: the picture on the TV, photos
 
 ### The house itself
 
-The shell (roof, outer walls, yard, tree, ground) can be one picture too: `shell` in the manifest, drawn over `docs/art-templates/lot.svg` so the rooms land in the right places. This is the last thing to replace, and the app looks fine with a hand-drawn interior inside the sketched shell.
+The shell (roof, outer walls, yard, tree, ground) can be one picture too: `shell` in the manifest, drawn over `docs/art-templates/lot.svg` so the rooms land in the right places. This is the last thing to replace, and the app looks fine with your own interior inside the built-in shell.
 
 ## Tracing templates
 
@@ -130,11 +140,11 @@ The shell (roof, outer walls, yard, tree, ground) can be one picture too: `shell
 | `furniture.<key>.slots` | Where live content sits, in percent of the piece. `shape` is `rect`, `oval` or `screen` |
 | `shell` | The whole lot behind the rooms |
 
-Anything not listed keeps its placeholder sketch, so you can replace the house one drawing at a time.
+Anything not listed keeps its built-in drawing, so you can replace the house one drawing at a time.
 
 ## Making it sit well
 
-The placeholder ink is `#2A2F45`, a blue-black, at roughly 6 pixels on a 1600 pixel room. Matching that weight keeps new drawings and old sketches from fighting while the house is half replaced.
+The built-in line is roughly 7 pixels on a 1600 pixel room, coloured as described at the top. Matching that weight, and outlining in a dark shade of the fill instead of black, keeps your drawings and the built-in ones from fighting while the house is half replaced.
 
 Draw for daylight. Night, unlit rooms and the blueprint look are overlays and filters the app adds on top, so they work on any art without extra drawings.
 

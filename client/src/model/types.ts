@@ -3,8 +3,8 @@
  *
  * A HOUSE is a grid of ROOMS. Each room holds FURNITURE. Furniture is where
  * FILES live. Nothing in here knows how anything is drawn: art is looked up
- * separately by `kind`, which is what lets hand-drawn art replace the
- * placeholder sketches without touching this file.
+ * separately by `kind`, which is what lets your own drawings replace the
+ * built-in ones without touching this file.
  *
  * See docs/LAYOUT_FORMAT.md for the prose version of this spec.
  */

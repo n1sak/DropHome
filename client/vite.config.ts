@@ -14,10 +14,11 @@ export default defineConfig(({ mode }) => {
     },
     server: {
       port: 5173,
+      // changeOrigin stays off so the server sees the page's own host and its same-site check passes
       proxy: {
-        '/api': 'http://localhost:8787',
-        '/share': 'http://localhost:8787',
-        '/drop': 'http://localhost:8787',
+        '/api': { target: 'http://localhost:8787', changeOrigin: false },
+        '/share': { target: 'http://localhost:8787', changeOrigin: false },
+        '/drop': { target: 'http://localhost:8787', changeOrigin: false },
       },
     },
     build: artifact

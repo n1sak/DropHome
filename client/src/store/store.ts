@@ -11,6 +11,7 @@ import { DAY, ageInDays } from '../lib/time';
 import { makeThumb, readSnippet } from '../lib/thumbs';
 import { sounds } from '../lib/sound';
 import { defaultHouse } from '../model/defaultHouse';
+import { repaint } from '../model/restyle';
 import { COL_W, GAP, freeCells } from '../model/layout';
 import { SEEDS, buildSeed } from '../model/seed';
 import { CATALOG, makeFurniture, makeRoom, uid } from '../model/templates';
@@ -212,7 +213,7 @@ export const useApp = create<AppState>((set, get) => {
       if (get().unpacking || get().uploading > 0 || savePending) return reload();
       try {
         const { house, files } = await store.load();
-        if (house) set({ house, files });
+        if (house) set({ house: repaint(house), files });
       } catch {
         /* offline for a moment: the next event will catch us up */
       }
@@ -255,6 +256,11 @@ export const useApp = create<AppState>((set, get) => {
         let { house, files } = await store.load();
         const furnish = !house || !house.seeded;
         if (!house) house = defaultHouse('My house');
+        const painted = repaint(house);
+        if (painted !== house) {
+          house = painted;
+          if (!furnish) await store.saveHouse(house).catch(() => undefined);
+        }
         if (furnish) {
           // written first: if the page reloads halfway through, we get fewer samples, never doubles
           house = { ...house, seeded: true, updatedAt: Date.now() };
@@ -568,7 +574,7 @@ export const useApp = create<AppState>((set, get) => {
       editHouse((h) => ({ ...h, rooms: [...h.rooms, room] }));
       set({ buildTarget: null });
       sounds.build();
-      get().toast(`Built a ${room.name.toLowerCase()}.`, { tone: 'good' });
+      get().toast(`Built ${/^[aeiou]/i.test(room.name) ? 'an' : 'a'} ${room.name.toLowerCase()}.`, { tone: 'good' });
     },
     removeRoom(id) {
       const room = get().house.rooms.find((r) => r.id === id);

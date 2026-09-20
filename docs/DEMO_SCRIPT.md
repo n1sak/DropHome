@@ -1,6 +1,6 @@
 # Demo video: a two minute shot list
 
-Record at 1440 × 900 or larger, in Chrome, with sound on (the house makes small noises when things open and land). Use "Reset the sample house" in the menu before each take so the porch has boxes on it and there is dust to find. If you have your hand-drawn rooms in, start the take in one of those.
+Record at 1440 × 900 or larger, in Chrome, with sound on (the house makes small noises when things open and land). Use "Reset the sample house" in the menu before each take so the porch has boxes on it and there is dust to find.
 
 Have a folder of six to ten of your own messy files ready on the desktop: a recipe, a problem set, a photo or two named `IMG_1234.jpg`, a lease or a tax form, a code file, something with "draft" in the name.
 

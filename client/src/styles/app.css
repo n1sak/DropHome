@@ -7,44 +7,59 @@
 :root,
 .app[data-scene='day'] {
   /* the world */
-  --sky-1: #a9d2f3;
-  --sky-2: #e6f2fb;
-  --glass: #cfe6f7;
-  --grass: #9ccb86;
-  --leaf: #6fa868;
-  --leaf-light: #8cc27e;
-  --soil: #8a6a52;
-  --soil-dark: #74553f;
-  --roof: #55617e;
-  --roof-line: #3d4760;
-  --fence: #fbfaf6;
-  --orb: #ffd36b;
-  --orb-glow: rgba(255, 211, 107, 0.45);
-  --cloud: 0.92;
+  --sky-1: #cde8f4;
+  --sky-2: #e3f3f9;
+  --glass: #cbdaf2;
+  --grass: #a6d968;
+  --leaf: #8fcb53;
+  --leaf-light: #abdd6f;
+  --leaf-line: #3f7a2a;
+  --soil: #d9b38b;
+  --soil-dark: #c69c72;
+  --frame: #9a6642;
+  --frame-dark: #7d5034;
+  --roof: #e9635c;
+  --roof-2: #d8504f;
+  --roof-line: #8c2934;
+  --chimney: #f4c45f;
+  --chimney-line: #d9a04a;
+  --trunk: #c48d61;
+  --trunk-line: #7d5034;
+  --yard-dim: none;
+  --fence: #fffdf8;
+  --fence-line: #7b625a;
+  --orb: #f8cb62;
+  --orb-line: #b9822a;
+  --orb-glow: rgba(255, 238, 178, 0.8);
+  --cloud: 1;
+  --cloud-line: #2e2430;
   --stars: 0;
-  --shade-color: #1b2240;
-  --shade-unlit: 0.2;
+  --shade-color: #7a4a2e;
+  --shade-unlit: 0.1;
   --shade-lit: 0;
   --glow-lit: 0;
 
+  /* the drawings keep their own line colour in both themes */
+  --art-ink: #2e2430;
+
   /* the interface */
-  --ink: #232a3d;
-  --paper: #f3f6fa;
-  --panel: #ffffff;
-  --panel-2: #eef2f8;
-  --line: #cbd3e1;
-  --text: #1f2638;
-  --text-dim: #5a647c;
-  --accent: #2b50d6;
+  --ink: #2e2430;
+  --paper: #fff8ef;
+  --panel: #fffdf9;
+  --panel-2: #fbeee1;
+  --line: #ead6c6;
+  --text: #2e2430;
+  --text-dim: #78636b;
+  --accent: #b83b35;
   --accent-ink: #ffffff;
-  --accent-soft: #e1e8ff;
-  --lamp: #ffd36b;
-  --lamp-ink: #4a3800;
-  --danger: #c8402f;
-  --good: #23855a;
-  --label-bg: rgba(255, 255, 255, 0.9);
-  --scrim: rgba(18, 24, 48, 0.5);
-  --drop: 3px 4px 0 rgba(35, 42, 61, 0.22);
+  --accent-soft: #fde3dc;
+  --lamp: #ffd76e;
+  --lamp-ink: #4a3300;
+  --danger: #a3262c;
+  --good: #3b8436;
+  --label-bg: rgba(255, 253, 249, 0.94);
+  --scrim: rgba(46, 30, 40, 0.5);
+  --drop: 3px 4px 0 rgba(46, 36, 48, 0.2);
   --blueprint: #1d4c9e;
 
   --hand: 'Architects Daughter', 'Segoe Print', 'Bradley Hand', 'Comic Sans MS', cursive;
@@ -56,76 +71,102 @@
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
-    --sky-1: #0e1630;
-    --sky-2: #2b3763;
-    --glass: #1f2c54;
-    --grass: #3e6247;
-    --leaf: #2f5540;
-    --leaf-light: #3c6a4c;
-    --soil: #4a392f;
-    --soil-dark: #3a2c24;
-    --roof: #414c6e;
-    --roof-line: #2b3350;
-    --fence: #8d97b5;
-    --orb: #f3efd9;
-    --orb-glow: rgba(243, 239, 217, 0.28);
-    --cloud: 0.12;
+    --sky-1: #1a1533;
+    --sky-2: #3b2f5d;
+    --glass: #2b2855;
+    --grass: #4b7241;
+    --leaf: #3d6937;
+    --leaf-light: #4b7c43;
+    --leaf-line: #1c3819;
+    --soil: #5c4637;
+    --soil-dark: #4b382c;
+    --frame: #63432f;
+    --frame-dark: #4e3425;
+    --roof: #8b404b;
+    --roof-2: #7a3441;
+    --roof-line: #471925;
+    --chimney: #8f6f3c;
+    --chimney-line: #6e542b;
+    --trunk: #6a4a36;
+    --trunk-line: #3c2a20;
+    --yard-dim: brightness(0.58) saturate(0.8);
+    --fence: #9d93ab;
+    --fence-line: #4a4058;
+    --orb: #f6f0dc;
+    --orb-line: #cfc6a8;
+    --orb-glow: rgba(246, 240, 220, 0.22);
+    --cloud: 0.16;
+    --cloud-line: #12101f;
     --stars: 1;
+    --shade-color: #1d1433;
     --shade-unlit: 0.62;
     --shade-lit: 0.16;
     --glow-lit: 0.55;
-    --ink: #c9d2ea;
-    --paper: #141a2c;
-    --panel: #1c2338;
-    --panel-2: #252d47;
-    --line: #38425f;
-    --text: #e9edf8;
-    --text-dim: #9ca7c2;
-    --accent: #8ea7ff;
-    --accent-ink: #0f1630;
-    --accent-soft: #2a3563;
+    --ink: #e6d9dc;
+    --paper: #1d1726;
+    --panel: #281f33;
+    --panel-2: #33283f;
+    --line: #4b3d58;
+    --text: #f4eaeb;
+    --text-dim: #b5a4b2;
+    --accent: #ff9d8f;
+    --accent-ink: #3a0f0c;
+    --accent-soft: #4c2a35;
     --danger: #ff8d7d;
-    --good: #6fd6a4;
-    --label-bg: rgba(28, 35, 56, 0.92);
-    --scrim: rgba(4, 7, 18, 0.66);
+    --good: #8fd67f;
+    --label-bg: rgba(40, 31, 51, 0.94);
+    --scrim: rgba(10, 6, 16, 0.66);
     --drop: 3px 4px 0 rgba(0, 0, 0, 0.45);
   }
 }
 
 :root[data-theme='dark'],
 .app[data-scene='night'] {
-  --sky-1: #0e1630;
-  --sky-2: #2b3763;
-  --glass: #1f2c54;
-  --grass: #3e6247;
-  --leaf: #2f5540;
-  --leaf-light: #3c6a4c;
-  --soil: #4a392f;
-  --soil-dark: #3a2c24;
-  --roof: #414c6e;
-  --roof-line: #2b3350;
-  --fence: #8d97b5;
-  --orb: #f3efd9;
-  --orb-glow: rgba(243, 239, 217, 0.28);
-  --cloud: 0.12;
+  --sky-1: #1a1533;
+  --sky-2: #3b2f5d;
+  --glass: #2b2855;
+  --grass: #4b7241;
+  --leaf: #3d6937;
+  --leaf-light: #4b7c43;
+  --leaf-line: #1c3819;
+  --soil: #5c4637;
+  --soil-dark: #4b382c;
+  --frame: #63432f;
+  --frame-dark: #4e3425;
+  --roof: #8b404b;
+  --roof-2: #7a3441;
+  --roof-line: #471925;
+  --chimney: #8f6f3c;
+  --chimney-line: #6e542b;
+  --trunk: #6a4a36;
+  --trunk-line: #3c2a20;
+  --yard-dim: brightness(0.58) saturate(0.8);
+  --fence: #9d93ab;
+  --fence-line: #4a4058;
+  --orb: #f6f0dc;
+  --orb-line: #cfc6a8;
+  --orb-glow: rgba(246, 240, 220, 0.22);
+  --cloud: 0.16;
+  --cloud-line: #12101f;
   --stars: 1;
+  --shade-color: #1d1433;
   --shade-unlit: 0.62;
   --shade-lit: 0.16;
   --glow-lit: 0.55;
-  --ink: #c9d2ea;
-  --paper: #141a2c;
-  --panel: #1c2338;
-  --panel-2: #252d47;
-  --line: #38425f;
-  --text: #e9edf8;
-  --text-dim: #9ca7c2;
-  --accent: #8ea7ff;
-  --accent-ink: #0f1630;
-  --accent-soft: #2a3563;
+  --ink: #e6d9dc;
+  --paper: #1d1726;
+  --panel: #281f33;
+  --panel-2: #33283f;
+  --line: #4b3d58;
+  --text: #f4eaeb;
+  --text-dim: #b5a4b2;
+  --accent: #ff9d8f;
+  --accent-ink: #3a0f0c;
+  --accent-soft: #4c2a35;
   --danger: #ff8d7d;
-  --good: #6fd6a4;
-  --label-bg: rgba(28, 35, 56, 0.92);
-  --scrim: rgba(4, 7, 18, 0.66);
+  --good: #8fd67f;
+  --label-bg: rgba(40, 31, 51, 0.94);
+  --scrim: rgba(10, 6, 16, 0.66);
   --drop: 3px 4px 0 rgba(0, 0, 0, 0.45);
 }
 
@@ -238,17 +279,18 @@ kbd {
   height: 76px;
   border-radius: 50%;
   background: var(--orb);
-  box-shadow: 0 0 0 16px var(--orb-glow), 0 0 60px 30px var(--orb-glow);
-  transition: background 0.8s ease, box-shadow 0.8s ease;
+  border: 3px solid var(--orb-line);
+  box-shadow: 0 0 0 15px var(--orb-glow);
+  transition: background 0.8s ease, box-shadow 0.8s ease, border-color 0.8s ease;
 }
 
 .cloud {
   position: absolute;
   width: 190px;
-  height: 64px;
+  height: 87px;
+  overflow: visible;
   opacity: var(--cloud);
-  background: radial-gradient(circle at 28% 64%, #fff 0 27px, transparent 28px), radial-gradient(circle at 52% 42%, #fff 0 35px, transparent 36px), radial-gradient(circle at 77% 66%, #fff 0 25px, transparent 26px),
-    linear-gradient(#fff, #fff) 50% 100% / 56% 28px no-repeat;
+  transition: opacity 0.8s ease;
   animation: drift 140s linear infinite;
 }
 .cloud-a {
@@ -352,7 +394,26 @@ kbd {
   cursor: pointer;
   /* shows through transparent windows in hand-drawn backdrops, so they follow day and night */
   background: var(--glass);
-  box-shadow: inset 0 0 0 1.6px #2a2f45;
+}
+.room-edge {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+div.room-edge {
+  box-shadow: inset 0 0 0 1.8px var(--art-ink);
+}
+svg.room-edge {
+  overflow: visible;
+}
+svg.room-edge polygon {
+  fill: none;
+  stroke: var(--art-ink);
+  /* half of it falls outside the clip, which leaves the same 1.8 as the square rooms */
+  stroke-width: 3.6px;
+  stroke-linejoin: round;
 }
 .room.is-focus {
   cursor: default;
@@ -446,6 +507,13 @@ kbd {
   display: block;
   overflow: visible;
 }
+/* nothing lights the yard, so at night the porch, mailbox and bins dim with the sky */
+.furn-porch .furn-svg,
+.furn-mailbox .furn-svg,
+.furn-bins .furn-svg {
+  filter: var(--yard-dim);
+  transition: filter 0.8s ease;
+}
 
 .fpart {
   transform-box: fill-box;
@@ -525,7 +593,7 @@ kbd {
 .furn.is-editable {
   cursor: grab;
   touch-action: none;
-  outline: 1px dashed rgba(42, 47, 69, 0.55);
+  outline: 1px dashed rgba(46, 36, 48, 0.55);
   outline-offset: 1px;
 }
 .furn.is-selected {
@@ -539,7 +607,7 @@ kbd {
   width: 10px;
   height: 10px;
   background: #ffb400;
-  border: 1.5px solid #2a2f45;
+  border: 1.5px solid var(--art-ink);
   cursor: nwse-resize;
   touch-action: none;
 }
@@ -569,9 +637,12 @@ kbd {
 .slot-screen {
   overflow: hidden;
 }
-.slot-fill,
+/* an empty frame shows its mat, an idle television stays dark */
+.slot-fill {
+  background: #fcefd9;
+}
 .slot-tv {
-  background: #10131d;
+  background: #1d1726;
 }
 .slot-oval {
   border-radius: 50%;
@@ -586,7 +657,7 @@ kbd {
 .slot-idle {
   width: 100%;
   height: 100%;
-  background: repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.05) 0 1px, transparent 1px 3px), radial-gradient(circle at 50% 40%, #2a3150, #10131d);
+  background: repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.05) 0 1px, transparent 1px 3px), radial-gradient(circle at 50% 40%, #453848, #1d1726);
 }
 @keyframes fadein {
   from {
@@ -622,7 +693,7 @@ kbd {
   color: var(--text);
   font: 400 13px/1.1 var(--hand);
   padding: 4px 9px 3px;
-  box-shadow: 2px 2px 0 rgba(35, 42, 61, 0.28);
+  box-shadow: 2px 2px 0 rgba(46, 36, 48, 0.28);
   white-space: nowrap;
   transition: transform 0.15s ease, background 0.15s ease;
 }
@@ -694,7 +765,7 @@ kbd {
 }
 .tag.is-selected {
   background: #ffb400;
-  color: #2a2f45;
+  color: var(--art-ink);
 }
 
 .build-here {
@@ -868,7 +939,7 @@ kbd {
   border: 1.5px solid var(--ink);
   border-radius: var(--wobble);
   background: var(--label-bg);
-  box-shadow: 2px 2px 0 rgba(35, 42, 61, 0.28);
+  box-shadow: 2px 2px 0 rgba(46, 36, 48, 0.28);
   font: 400 14px/1 var(--hand);
   max-width: calc(100% - 32px);
 }
@@ -1032,13 +1103,13 @@ kbd {
   font-size: calc(var(--w) / 10.8);
   transform: rotate(var(--tilt, 0deg));
   transition: transform 0.2s ease, filter 0.2s ease;
-  filter: drop-shadow(1px 2px 0 rgba(35, 42, 61, 0.28));
-  color: #2a2f45;
+  filter: drop-shadow(1px 2px 0 rgba(46, 36, 48, 0.28));
+  color: var(--art-ink);
 }
 .fo > div:first-child {
   position: absolute;
   inset: 0;
-  border: max(1px, 0.13em) solid #2a2f45;
+  border: max(1px, 0.13em) solid var(--art-ink);
   overflow: hidden;
 }
 .fo-mini {
@@ -1053,11 +1124,11 @@ kbd {
 .fo-photo-img {
   width: 100%;
   aspect-ratio: 1 / 0.92;
-  background: #d8dee9 center / cover;
+  background: #f3e3d6 center / cover;
   display: grid;
   place-items: center;
-  color: #8a94a8;
-  border: max(1px, 0.08em) solid rgba(42, 47, 69, 0.5);
+  color: #a58d82;
+  border: max(1px, 0.08em) solid rgba(46, 36, 48, 0.5);
 }
 .fo-mini .fo-photo {
   padding: 0.7em 0.7em 0;
@@ -1100,7 +1171,7 @@ kbd {
 .fo-paper-body p {
   margin: 0 0 0.28em;
   font: 400 0.62em/1.25 var(--ui);
-  color: rgba(42, 47, 69, 0.72);
+  color: rgba(46, 36, 48, 0.72);
   white-space: nowrap;
   overflow: hidden;
 }
@@ -1108,7 +1179,7 @@ kbd {
   height: 0.5em;
   margin-bottom: 0.7em;
   border-radius: 1em;
-  background: rgba(42, 47, 69, 0.14);
+  background: rgba(46, 36, 48, 0.14);
 }
 .fo-tab {
   position: absolute;
@@ -1116,13 +1187,13 @@ kbd {
   right: 0;
   font: 500 0.72em/1 var(--mono);
   padding: 0.35em 0.5em;
-  background: #3a568a;
+  background: #5668a6;
   color: #fff;
   border-radius: 0 0 0 0.5em;
   letter-spacing: 0.03em;
 }
 .fo-pdf .fo-tab {
-  background: #cb5b43;
+  background: #c9463f;
 }
 .fo-sheet .fo-tab {
   background: #2f7d57;
@@ -1148,7 +1219,7 @@ kbd {
 }
 
 .fo-code {
-  background: #1f2433;
+  background: #2e2430;
   border-radius: 0.4em;
   padding: 1.5em 0.6em 0.5em;
 }
@@ -1166,8 +1237,8 @@ kbd {
   color: #9db9ff;
 }
 .fo-code .fo-tab {
-  background: #62aba2;
-  color: #10241f;
+  background: #93cb55;
+  color: #1d3310;
 }
 
 .fo-record {
@@ -1181,8 +1252,8 @@ kbd {
   width: 78%;
   aspect-ratio: 1;
   border-radius: 50%;
-  border: max(1px, 0.13em) solid #2a2f45;
-  background: repeating-radial-gradient(circle, #23283a 0 0.22em, #2f3550 0.22em 0.4em);
+  border: max(1px, 0.13em) solid var(--art-ink);
+  background: repeating-radial-gradient(circle, #2e2430 0 0.22em, #453848 0.22em 0.4em);
   display: grid;
   place-items: center;
 }
@@ -1190,8 +1261,8 @@ kbd {
   width: 34%;
   aspect-ratio: 1;
   border-radius: 50%;
-  background: #e6ba43;
-  border: max(1px, 0.1em) solid #2a2f45;
+  background: #f4c45f;
+  border: max(1px, 0.1em) solid var(--art-ink);
 }
 .fo-sleeve {
   position: absolute;
@@ -1199,7 +1270,7 @@ kbd {
   top: 5%;
   width: 84%;
   aspect-ratio: 1;
-  border: max(1px, 0.13em) solid #2a2f45;
+  border: max(1px, 0.13em) solid var(--art-ink);
   border-radius: 0.2em;
   background: linear-gradient(135deg, hsl(var(--hue) 55% 62%), hsl(calc(var(--hue) + 50) 60% 46%));
   padding: 0.6em;
@@ -1219,7 +1290,7 @@ kbd {
 .fo-tape {
   top: 18% !important;
   bottom: 18% !important;
-  background: #23283a;
+  background: #3b3043;
   border-radius: 0.5em;
   padding: 0.7em;
   display: flex;
@@ -1229,7 +1300,7 @@ kbd {
 .fo-tape-window {
   flex: 1;
   border-radius: 0.3em;
-  background: #4a5170;
+  background: #6b5a70;
   display: flex;
   justify-content: space-around;
   align-items: center;
@@ -1239,7 +1310,7 @@ kbd {
   aspect-ratio: 1;
   border-radius: 50%;
   background: #fffdf6;
-  border: 0.35em solid #23283a;
+  border: 0.35em solid #3b3043;
 }
 .fo-tape-label {
   background: #fffdf6;
@@ -1253,7 +1324,7 @@ kbd {
 
 .fo-box {
   top: 16% !important;
-  background: #cdaa7c;
+  background: #e5bd88;
   border-radius: 0.2em;
   display: grid;
   place-items: center;
@@ -1265,15 +1336,15 @@ kbd {
   top: 0;
   width: 16%;
   height: 46%;
-  background: #f3e7cf;
-  border: max(1px, 0.08em) solid rgba(42, 47, 69, 0.5);
+  background: #fcefd9;
+  border: max(1px, 0.08em) solid rgba(46, 36, 48, 0.5);
   border-top: 0;
 }
 .fo-box-label {
   position: relative;
   margin-top: 2.2em;
   background: #fffdf6;
-  border: max(1px, 0.08em) solid #2a2f45;
+  border: max(1px, 0.08em) solid var(--art-ink);
   padding: 0.3em 0.5em;
   font: 400 0.95em/1.1 var(--hand);
   text-align: center;
@@ -1291,12 +1362,12 @@ kbd {
   width: 1.9em;
   height: 1.9em;
   border-radius: 50%;
-  border: max(1px, 0.12em) solid #2a2f45;
+  border: max(1px, 0.12em) solid var(--art-ink);
 }
 .fo-pin {
   top: -0.8em;
   left: calc(50% - 0.95em);
-  background: #d8503f;
+  background: #dd4f4c;
   color: #fff;
 }
 .fo-shared {
@@ -1340,7 +1411,7 @@ kbd {
   height: 3.4em;
   pointer-events: none;
   background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40' fill='none' stroke='%23ffffff' stroke-width='1.3' stroke-linecap='round'%3E%3Cpath d='M1 1 38 8M1 1 30 24M1 1 16 34M1 1 5 38M12 3Q13 9 5 12M22 5Q22 16 9 20M33 7Q30 22 12 29'/%3E%3C/svg%3E") center / contain no-repeat;
-  filter: drop-shadow(0 0 0.6px rgba(42, 47, 69, 0.9));
+  filter: drop-shadow(0 0 0.6px rgba(46, 36, 48, 0.9));
 }
 
 /* ---------- the contents panel ---------- */
@@ -1357,7 +1428,7 @@ kbd {
   border: 1.5px solid var(--ink);
   border-radius: 18px 20px 17px 21px / 20px 17px 21px 18px;
   background: var(--panel);
-  box-shadow: 5px 6px 0 rgba(35, 42, 61, 0.25);
+  box-shadow: 5px 6px 0 rgba(46, 36, 48, 0.25);
   overflow: hidden;
   animation: panel-in 0.5s 0.22s var(--ease-out) both;
 }
@@ -1425,59 +1496,59 @@ kbd {
   padding: 22px 20px 26px;
   border-top: 1.5px solid var(--ink);
   border-bottom: 1.5px solid var(--ink);
-  background-color: #d9b27c;
+  background-color: #e3b780;
   background-image: repeating-linear-gradient(90deg, rgba(116, 73, 47, 0.16) 0 2px, transparent 2px 120px), repeating-linear-gradient(0deg, rgba(116, 73, 47, 0.1) 0 1px, transparent 1px 38px);
 }
 /* what you are looking into changes the surface the files lie on */
 .panel-archive .panel-body,
 .panel-reference .panel-body {
-  background-color: #8e6a4b;
+  background-color: #a8714f;
   background-image: repeating-linear-gradient(0deg, rgba(40, 24, 12, 0.34) 0 7px, transparent 7px 196px);
 }
 .panel-display .panel-body {
-  background-color: #cfa16b;
+  background-color: #e0b179;
   background-image: radial-gradient(rgba(116, 73, 47, 0.35) 1px, transparent 1.6px);
   background-size: 9px 9px;
 }
 .panel-kind-fridge .panel-body,
 .panel-kind-vanity .panel-body {
-  background: #eef2f5;
+  background: #f1f3fb;
 }
 .panel-kind-pegboard .panel-body {
-  background-color: #e9e2d2;
-  background-image: radial-gradient(rgba(60, 50, 40, 0.4) 1.5px, transparent 2.2px);
+  background-color: #fbeedc;
+  background-image: radial-gradient(rgba(122, 84, 67, 0.4) 1.5px, transparent 2.2px);
   background-size: 22px 22px;
 }
 .panel-drafts .panel-body {
-  background-color: #cfe8ea;
-  background-image: linear-gradient(rgba(98, 171, 162, 0.35) 1.5px, transparent 1.5px), linear-gradient(90deg, rgba(98, 171, 162, 0.35) 1.5px, transparent 1.5px);
+  background-color: #eef1fb;
+  background-image: linear-gradient(rgba(116, 134, 194, 0.3) 1.5px, transparent 1.5px), linear-gradient(90deg, rgba(116, 134, 194, 0.3) 1.5px, transparent 1.5px);
   background-size: 34px 34px;
 }
 .panel-memories .panel-body {
-  background: #3f7f78;
+  background: #c9785f;
 }
 .panel-media .panel-body {
-  background: #5d4a7a;
+  background: #6b4a63;
 }
 .panel-vault .panel-body,
 .panel-backup .panel-body,
 .panel-screen .panel-body {
-  background: #2a3042;
+  background: #3b3043;
 }
 .panel-cleanup .panel-body {
   background-color: #ead7b4;
   background-image: repeating-linear-gradient(45deg, rgba(150, 110, 60, 0.22) 0 3px, transparent 3px 10px), repeating-linear-gradient(-45deg, rgba(150, 110, 60, 0.22) 0 3px, transparent 3px 10px);
 }
 .panel-trash .panel-body {
-  background: #5c6b62;
+  background: #7f9a62;
 }
 .panel-inbox .panel-body {
-  background-color: #c9a06b;
+  background-color: #ddab73;
   background-image: repeating-linear-gradient(0deg, rgba(90, 56, 30, 0.35) 0 2px, transparent 2px 46px);
 }
 .panel-recent .panel-body,
 .panel-shared .panel-body {
-  background-color: #94654a;
+  background-color: #b57d58;
   background-image: repeating-linear-gradient(90deg, rgba(40, 24, 12, 0.16) 0 2px, transparent 2px 140px);
 }
 
@@ -1490,8 +1561,8 @@ kbd {
   padding: 5px 12px 4px;
   margin-bottom: 16px;
   background: #fffdf6;
-  color: #2a2f45;
-  border: 1.5px solid #2a2f45;
+  color: var(--art-ink);
+  border: 1.5px solid var(--art-ink);
   border-radius: 4px;
   transform: rotate(-1.5deg);
 }
@@ -1517,7 +1588,7 @@ kbd {
 .tile-object:hover .fo,
 .tile-object:focus-visible .fo {
   transform: rotate(0deg) translateY(-5px) scale(1.05);
-  filter: drop-shadow(3px 7px 0 rgba(35, 42, 61, 0.3));
+  filter: drop-shadow(3px 7px 0 rgba(46, 36, 48, 0.3));
 }
 .tile.is-found .tile-object {
   animation: found 1.1s ease 4;
@@ -1608,9 +1679,9 @@ kbd {
   aspect-ratio: 16 / 9;
   max-height: 36vh;
   margin: 0 auto;
-  border: 9px solid #23283a;
+  border: 9px solid #3b3043;
   border-radius: 12px;
-  background: #10131d;
+  background: #1d1726;
   overflow: hidden;
   box-shadow: 0 0 0 1.5px var(--ink), 0 0 40px rgba(191, 221, 245, 0.35);
 }
@@ -1838,7 +1909,7 @@ kbd {
   padding: 28px 32px;
   overflow: auto;
   background: #fffdf6;
-  color: #2a2f45;
+  color: var(--art-ink);
 }
 .view-text {
   font: 13px/1.6 var(--mono);
@@ -1846,7 +1917,7 @@ kbd {
   overflow-wrap: anywhere;
 }
 .view-text.is-code {
-  background: #1f2433;
+  background: #2e2430;
   color: #d5e4da;
 }
 .view-md {
@@ -1874,7 +1945,7 @@ kbd {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #cb5b43;
+  background: #e9635c;
 }
 .view-md .md-num {
   padding-left: 0;
@@ -1924,7 +1995,7 @@ kbd {
   font: 12.5px/1.55 var(--mono);
   white-space: pre-wrap;
   background: #fffdf6;
-  color: #2a2f45;
+  color: var(--art-ink);
   border: 1.5px solid var(--ink);
   border-radius: 8px;
 }
@@ -2090,17 +2161,18 @@ kbd {
 }
 .housemap-body {
   position: absolute;
-  background: #2a2f45;
+  background: var(--frame);
+  box-shadow: 0 0 0 1.2px var(--art-ink);
   border-radius: 2px;
 }
 .housemap-room {
   position: absolute;
-  border: 1.2px solid #2a2f45;
+  border: 1.2px solid var(--art-ink);
   padding: 0;
   overflow: hidden;
   display: grid;
   place-items: center;
-  color: #2a2f45;
+  color: var(--art-ink);
   font: 400 11px/1 var(--hand);
   transition: filter 0.15s ease;
 }
@@ -2330,7 +2402,7 @@ kbd {
   --fo-w: 64px;
   margin: -40px 0 0 -32px;
   transform: rotate(-7deg);
-  filter: drop-shadow(4px 9px 0 rgba(35, 42, 61, 0.3));
+  filter: drop-shadow(4px 9px 0 rgba(46, 36, 48, 0.3));
 }
 .drag-ghost-label {
   position: absolute;
@@ -2602,7 +2674,7 @@ body.is-dragging-file * {
 }
 .cellgrid .is-on {
   background: #ffb400;
-  color: #2a2f45;
+  color: var(--art-ink);
   border-color: #ffb400;
 }
 .check {

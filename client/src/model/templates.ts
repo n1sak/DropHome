@@ -89,7 +89,7 @@ export const ROOM_TEMPLATES: Record<RoomKind, RoomTemplate> = {
     kind: 'attic',
     name: 'Attic',
     purpose: 'Cold storage. Old work and old photos that are not relevant any more but worth keeping.',
-    wall: '#DDC7A4',
+    wall: '#FBE7D3',
     blurb: 'Cold storage for anything older than a year.',
     pieces: [
       { kind: 'trunk', x: 29, y: 45, w: 14, h: 50, name: 'School trunk', hint: 'Old coursework, by year' },
@@ -101,7 +101,7 @@ export const ROOM_TEMPLATES: Record<RoomKind, RoomTemplate> = {
     kind: 'study',
     name: 'Study',
     purpose: 'School work: problem sets, lecture notes, essays, lab reports, syllabi, readings.',
-    wall: '#D9DEF7',
+    wall: '#EEF1FB',
     blurb: 'Coursework. Desk for this term, closet for the last.',
     pieces: [
       { kind: 'corkboard', x: 5, y: 9, w: 24, h: 31, hint: 'Pinned: deadlines, syllabi, schedules' },
@@ -114,7 +114,7 @@ export const ROOM_TEMPLATES: Record<RoomKind, RoomTemplate> = {
     kind: 'bedroom',
     name: 'Bedroom',
     purpose: 'Personal and private: journals, lists, personal records, and important documents in the safe.',
-    wall: '#F4DDD8',
+    wall: '#FFEEF0',
     blurb: 'Private things. Nightstand, wardrobe and a safe.',
     pieces: [
       { kind: 'nightstand', x: 42, y: 62, w: 13, h: 30 },
@@ -126,7 +126,7 @@ export const ROOM_TEMPLATES: Record<RoomKind, RoomTemplate> = {
     kind: 'bathroom',
     name: 'Bathroom',
     purpose: 'Works in progress: rough drafts, ideas, moodboards and decor inspiration, plus things that need cleaning up.',
-    wall: '#CFE8EA',
+    wall: '#EDF3FC',
     blurb: 'Where things get polished. Drafts soak in the tub.',
     pieces: [
       { kind: 'vanity', x: 5, y: 12, w: 26, h: 80, hint: 'How you present yourself: résumé, headshot, bio' },
@@ -139,7 +139,7 @@ export const ROOM_TEMPLATES: Record<RoomKind, RoomTemplate> = {
     kind: 'kitchen',
     name: 'Kitchen',
     purpose: 'Food and household: recipes, grocery lists, meal plans, appliance manuals, warranties.',
-    wall: '#F7E9BB',
+    wall: '#FFF5DA',
     blurb: 'Recipes in the box, lists on the fridge.',
     pieces: [
       { kind: 'fridge', x: 4, y: 16, w: 20, h: 76, hint: 'Pinned: grocery list, meal plan' },
@@ -152,7 +152,7 @@ export const ROOM_TEMPLATES: Record<RoomKind, RoomTemplate> = {
     kind: 'hall',
     name: 'Hall',
     purpose: 'The hub of the house. Nothing is stored here: it shows recent files and everything you have shared.',
-    wall: '#D5E3D3',
+    wall: '#FFF9F0',
     blurb: 'The hub: recents and everything you have shared.',
     pieces: [
       { kind: 'consoleTable', x: 5, y: 54, w: 30, h: 38 },
@@ -163,7 +163,7 @@ export const ROOM_TEMPLATES: Record<RoomKind, RoomTemplate> = {
     kind: 'living',
     name: 'Living room',
     purpose: 'Photos and memories: family photos, trips, events, childhood pictures.',
-    wall: '#F6E3D0',
+    wall: '#FFF0E4',
     blurb: 'Photos and memories, with a TV that plays them.',
     pieces: [
       { kind: 'photoWall', x: 4, y: 8, w: 28, h: 30 },
@@ -177,7 +177,7 @@ export const ROOM_TEMPLATES: Record<RoomKind, RoomTemplate> = {
     kind: 'workshop',
     name: 'Workshop',
     purpose: 'Side projects and code: source files, notebooks, project archives, templates, configs.',
-    wall: '#DCDFE4',
+    wall: '#F4EFEA',
     blurb: 'Code and side projects. Bench, pegboard, shelves.',
     pieces: [
       { kind: 'pegboard', x: 5, y: 8, w: 40, h: 36 },
@@ -190,7 +190,7 @@ export const ROOM_TEMPLATES: Record<RoomKind, RoomTemplate> = {
     kind: 'den',
     name: 'Den',
     purpose: 'Music and video: songs, voice memos, recordings, clips, films.',
-    wall: '#D3C9E6',
+    wall: '#F8EAF2',
     blurb: 'Music and video. A crate of records and a big screen.',
     pieces: [
       { kind: 'projector', x: 25, y: 7, w: 48, h: 50 },
@@ -202,7 +202,7 @@ export const ROOM_TEMPLATES: Record<RoomKind, RoomTemplate> = {
     kind: 'cellar',
     name: 'Cellar',
     purpose: 'Backups and bulk: device backups, exports, zip archives, anything big that just needs to be kept safe.',
-    wall: '#CDB9AB',
+    wall: '#EFE3D7',
     blurb: 'Backups and big archives, safe underground.',
     pieces: [
       { kind: 'backupRack', x: 6, y: 18, w: 20, h: 74 },
@@ -213,7 +213,7 @@ export const ROOM_TEMPLATES: Record<RoomKind, RoomTemplate> = {
     kind: 'office',
     name: 'Office',
     purpose: 'Career and work: résumés, cover letters, offers, internship paperwork, work projects.',
-    wall: '#D6E0EA',
+    wall: '#EFF3F9',
     blurb: 'Career and work. Desk, filing cabinet, board.',
     pieces: [
       { kind: 'corkboard', x: 6, y: 9, w: 26, h: 31, hint: 'Pinned: applications and deadlines' },
@@ -226,7 +226,7 @@ export const ROOM_TEMPLATES: Record<RoomKind, RoomTemplate> = {
     kind: 'studio',
     name: 'Studio',
     purpose: 'Creative work: drawings, designs, illustrations, sketches, art references.',
-    wall: '#F3E6EE',
+    wall: '#FFF0F4',
     blurb: 'Art and design. Easel, flat files, references.',
     pieces: [
       { kind: 'pegboard', x: 34, y: 8, w: 36, h: 34, hint: 'Pinned: references and palettes' },
@@ -239,7 +239,7 @@ export const ROOM_TEMPLATES: Record<RoomKind, RoomTemplate> = {
     kind: 'library',
     name: 'Library',
     purpose: 'Reading: books, papers, articles, long PDFs, reading lists.',
-    wall: '#D9CDB8',
+    wall: '#F8EBDC',
     blurb: 'Books, papers and long reads.',
     pieces: [
       { kind: 'bookshelf', x: 5, y: 12, w: 24, h: 80, hint: 'Books and papers' },
@@ -251,7 +251,7 @@ export const ROOM_TEMPLATES: Record<RoomKind, RoomTemplate> = {
     kind: 'greenhouse',
     name: 'Greenhouse',
     purpose: 'Things that are still growing: goals, plans, long-term ideas, journals about the future.',
-    wall: '#DDEBD2',
+    wall: '#F0F7E6',
     blurb: 'Goals and ideas that are still growing.',
     pieces: [
       { kind: 'planter', x: 6, y: 56, w: 34, h: 36 },
@@ -266,8 +266,10 @@ export const ADDABLE_ROOMS: RoomKind[] = [
   'study', 'office', 'studio', 'library', 'living', 'kitchen', 'bedroom', 'bathroom', 'workshop', 'den', 'greenhouse', 'cellar', 'hall',
 ];
 
+/** Walls stay close to white so the furniture carries the colour. The second row is for people who want more. */
 export const WALL_SWATCHES = [
-  '#D9DEF7', '#F4DDD8', '#CFE8EA', '#F7E9BB', '#D5E3D3', '#F6E3D0', '#DCDFE4', '#D3C9E6', '#CDB9AB', '#D6E0EA', '#F3E6EE', '#DDEBD2', '#DDC7A4', '#F2F0EA',
+  '#FFFDF8', '#FFF9F0', '#FFF0E4', '#FFEEF0', '#FFF0F4', '#F8EAF2', '#EEF1FB', '#EDF3FC', '#EFF3F9', '#F0F7E6', '#FFF5DA', '#FBE7D3', '#F8EBDC', '#F4EFEA', '#EFE3D7',
+  '#FBD9C5', '#F9CFD4', '#FBE6A8', '#D6DDF5', '#DCEFCB',
 ];
 
 let counter = 0;

@@ -46,7 +46,12 @@ app.use('/api', (req, res, next) => {
   const from = req.get('origin');
   if (req.method === 'GET' || !from) return next();
   try {
-    if (new URL(from).host === req.get('host')) return next();
+    const origin = new URL(from);
+    const host = req.get('host') ?? '';
+    if (origin.host === host) return next();
+    // the Vite dev server proxies from another port on this machine: a page on the internet can never have a loopback origin
+    const loopback = (name) => /^(localhost|127\.0\.0\.1|\[::1\])$/.test(name);
+    if (loopback(origin.hostname) && loopback(host.replace(/:\d+$/, ''))) return next();
   } catch {
     /* malformed Origin: refuse below */
   }

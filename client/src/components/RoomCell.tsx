@@ -3,7 +3,7 @@ import { backgroundFor, useArtUrl, useManifest } from '../art/customArt';
 import { drawRoom } from '../art/roomArt';
 import { SketchSvg } from '../art/Sketch';
 import { hashSeed } from '../art/sketch';
-import { furnitureRect, roomClip, roomRect, type Geometry } from '../model/layout';
+import { atticOutline, furnitureRect, roomClip, roomRect, type Geometry } from '../model/layout';
 import type { FileItem, Room } from '../model/types';
 import { contentsOf, isLit, useApp } from '../store/store';
 import { FurniturePiece } from './FurniturePiece';
@@ -60,6 +60,14 @@ export const RoomCell = memo(function RoomCell({ room, geo, files }: Props) {
       ))}
       <div className="room-shade" />
       <div className="room-glow" />
+      {/* the ink line where the wall meets the frame: drawn last so nothing in the room covers it */}
+      {clip ? (
+        <svg className="room-edge" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+          <polygon points={atticOutline(geo).map(([x, y]) => `${x},${y}`).join(' ')} vectorEffect="non-scaling-stroke" />
+        </svg>
+      ) : (
+        <div className="room-edge" />
+      )}
       {pulse > 0 && <div key={pulse} className="room-pulse" />}
     </div>
   );
