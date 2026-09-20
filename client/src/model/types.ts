@@ -1,5 +1,5 @@
 /**
- * Roomy data model.
+ * DropHome data model.
  *
  * A HOUSE is a grid of ROOMS. Each room holds FURNITURE. Furniture is where
  * FILES live. Nothing in here knows how anything is drawn: art is looked up

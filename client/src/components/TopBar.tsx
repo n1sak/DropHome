@@ -32,19 +32,19 @@ export function TopBar({ night }: { night: boolean }) {
   return (
     <>
       <header className="topbar">
-        <button className="brand" onClick={app.goHome} aria-label="Roomy. Back to the whole house">
+        <button className="brand" onClick={app.goHome} aria-label="DropHome. Back to the whole house">
           <svg viewBox="0 0 32 32" width="26" height="26" aria-hidden="true">
             <path d="M4 15 16 4l12 11" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
             <path d="M7.500 14v13h17V14" fill="var(--lamp)" stroke="currentColor" strokeWidth="2.6" strokeLinejoin="round" />
             <path d="M13.500 27v-7h5v7" fill="var(--panel)" stroke="currentColor" strokeWidth="2.200" strokeLinejoin="round" />
           </svg>
-          <span>Roomy</span>
+          <span>DropHome</span>
         </button>
 
         <SearchBox />
 
         <div className="topbar-actions">
-          <span className="meter" title={storeKind === 'server' ? 'Stored on the Roomy server' : 'Stored in this browser'}>
+          <span className="meter" title={storeKind === 'server' ? 'Stored on the DropHome server' : 'Stored in this browser'}>
             {live.length} things · {prettySize(bytes)}
           </span>
           <button className="bar-btn" onClick={() => app.setDialog('clean')} title="Spring cleaning">
@@ -63,7 +63,7 @@ export function TopBar({ night }: { night: boolean }) {
             {menu && (
               <div className="menu menu-bar" role="menu">
                 <button role="menuitem" onClick={() => (setMenu(false), app.setDialog('about'))}>
-                  <Icon name="info" size={16} /> How Roomy works
+                  <Icon name="info" size={16} /> How DropHome works
                 </button>
                 <button role="menuitem" onClick={() => app.setSound(!prefs.sound)}>
                   <Icon name={prefs.sound ? 'soundOn' : 'soundOff'} size={16} /> Sound {prefs.sound ? 'on' : 'off'}

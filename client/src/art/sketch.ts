@@ -1,5 +1,5 @@
 /**
- * A tiny pen on top of rough.js. Every drawing in Roomy goes through here,
+ * A tiny pen on top of rough.js. Every drawing in DropHome goes through here,
  * which is what gives rooms and furniture the same look: one confident, slightly
  * wobbly marker line around a flat fill, and the line is a darker shade of
  * whatever it surrounds (brown around wood, deep red around a curtain).

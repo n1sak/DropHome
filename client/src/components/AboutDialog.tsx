@@ -18,12 +18,12 @@ export function AboutDialog() {
   if (!open) return null;
   const close = () => setDialog(null);
   return (
-    <div className="modal" role="dialog" aria-modal="true" aria-label="How Roomy works" onClick={(e) => e.target === e.currentTarget && close()}>
+    <div className="modal" role="dialog" aria-modal="true" aria-label="How DropHome works" onClick={(e) => e.target === e.currentTarget && close()}>
       <div className="dialog dialog-about">
         <header>
           <div>
             <h2>A house for your files</h2>
-            <p>You already know where things go in a house. Roomy uses that instead of folders.</p>
+            <p>You already know where things go in a house. DropHome uses that instead of folders.</p>
           </div>
           <button className="icon-btn" onClick={close} aria-label="Close">
             <Icon name="close" />
@@ -43,7 +43,7 @@ export function AboutDialog() {
             grammar, so a room you build yourself in Renovate mode works the same way.
           </p>
           <p className="status-line">
-            <span className="chip chip-soft">Storage: {storeKind === 'server' ? 'Roomy server' : storeKind === 'local' ? 'this browser' : 'memory only'}</span>
+            <span className="chip chip-soft">Storage: {storeKind === 'server' ? 'DropHome server' : storeKind === 'local' ? 'this browser' : 'memory only'}</span>
             <span className="chip chip-soft">Sorting: {brain === 'rules' ? 'built-in rules' : 'Claude'}</span>
           </p>
         </div>

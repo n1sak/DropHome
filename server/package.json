@@ -1,9 +1,9 @@
 {
-  "name": "roomy-server",
+  "name": "drophome-server",
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Small storage server for Roomy: files on disk, a JSON database, share links, a drop link for the mailbox, live sync and an optional Claude relay.",
+  "description": "Small storage server for DropHome: files on disk, a JSON database, share links, a drop link for the mailbox, live sync and an optional Claude relay.",
   "scripts": {
     "start": "node index.js",
     "dev": "node --watch index.js"

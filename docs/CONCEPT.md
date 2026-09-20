@@ -6,7 +6,7 @@ A folder tree asks you to do two hard things. When you save a file you have to i
 
 People are not bad at organizing, though. They are good at it in physical space. You do not search for your toothbrush. You know the fridge is where the grocery list goes and that the box of old school notebooks is somewhere in the attic. Spatial memory is strong, it is shared across people, and it costs nothing to learn. Memory champions use exactly this trick and call it a memory palace.
 
-Roomy takes that seriously. The top level of your storage is a house. Rooms are the parts of your life. Furniture is what a folder wishes it were: a place with a meaning.
+DropHome takes that seriously. The top level of your storage is a house. Rooms are the parts of your life. Furniture is what a folder wishes it were: a place with a meaning.
 
 ## One grammar, repeated in every room
 
@@ -51,7 +51,7 @@ Upstairs is for the mind, the ground floor is for living, and below ground is fo
 
 ## Time is part of the space
 
-A real house shows you time without being asked. Roomy does the same with three small signals. Files gather visible dust the longer they go untouched, and after two years they grow a cobweb. A room's lights are on only if you have used it in the last two weeks, so one look at the house at night tells you where your life has been lately. And spring cleaning notices what has been sitting out for more than a year and offers to box it up and carry it to the attic, where old things belong.
+A real house shows you time without being asked. DropHome does the same with three small signals. Files gather visible dust the longer they go untouched, and after two years they grow a cobweb. A room's lights are on only if you have used it in the last two weeks, so one look at the house at night tells you where your life has been lately. And spring cleaning notices what has been sitting out for more than a year and offers to box it up and carry it to the attic, where old things belong.
 
 ## How it maps to the challenge
 

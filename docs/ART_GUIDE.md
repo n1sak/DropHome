@@ -2,7 +2,7 @@
 
 ## The built-in style
 
-Everything you see in Roomy is drawn in code, in one style: a single slightly wobbly marker line around flat fills. The line is never plain black. It is a much darker shade of whatever it surrounds, so wood gets a brown line, a curtain a deep red one, a plant a dark green one. Only the structure of the house (frame, roof edge, room edges) uses the dark ink `#2E2430`.
+Everything you see in DropHome is drawn in code, in one style: a single slightly wobbly marker line around flat fills. The line is never plain black. It is a much darker shade of whatever it surrounds, so wood gets a brown line, a curtain a deep red one, a plant a dark green one. Only the structure of the house (frame, roof edge, room edges) uses the dark ink `#2E2430`.
 
 The palette is small and warm: coral, salmon, pink and peach, tan wood, mustard, a lime green for anything that grows, and periwinkle and denim as the only cool notes. Walls stay close to white so the furniture carries the colour, and the house frame is one brown.
 
@@ -48,9 +48,9 @@ If you move or resize a piece in Renovate mode, its rectangle changes and the ar
 
 There are three ways to make a piece move, and you can mix them on one piece.
 
-**Two drawings.** Closed and open, on the same canvas. Roomy cross-fades between them. The least drawing for a result that already reads well.
+**Two drawings.** Closed and open, on the same canvas. DropHome cross-fades between them. The least drawing for a result that already reads well.
 
-**Moving layers.** Draw the part that moves on its own layer: the closet doors, the drawer front, the trunk lid, the fridge door. Draw what is behind it on the base layer (the inside of the closet). Export every layer at the **full canvas size**, which is what Procreate and Photoshop do by default, and name a movement for each one. Roomy finds the outline of the ink on the layer by itself, so a door swings around its own hinge edge without you measuring anything.
+**Moving layers.** Draw the part that moves on its own layer: the closet doors, the drawer front, the trunk lid, the fridge door. Draw what is behind it on the base layer (the inside of the closet). Export every layer at the **full canvas size**, which is what Procreate and Photoshop do by default, and name a movement for each one. DropHome finds the outline of the ink on the layer by itself, so a door swings around its own hinge edge without you measuring anything.
 
 | `motion` | What it does | Good for |
 |---|---|---|
@@ -64,13 +64,13 @@ There are three ways to make a piece move, and you can mix them on one piece.
 
 If a ready-made movement is not right, give the layer your own `open` (and optionally `closed`) CSS transform and an `origin`, for example `"open": "rotate(-35deg)", "origin": "12% 90%"`. Everything eases with a slight overshoot, the same as the built-in furniture, and `delay` (milliseconds) staggers layers so two doors do not move in lockstep.
 
-**A flipbook.** For real hand-drawn animation: three to six frames on the same canvas, first frame closed, last frame open. Roomy plays them forward when the piece opens and backward when it closes, at 10 frames a second unless you say otherwise. Animating on twos like this suits the drawn look better than a smooth tween would. The frames have to be yours: Roomy can move and blend your drawings, but it does not invent in-between drawings in your style.
+**A flipbook.** For real hand-drawn animation: three to six frames on the same canvas, first frame closed, last frame open. DropHome plays them forward when the piece opens and backward when it closes, at 10 frames a second unless you say otherwise. Animating on twos like this suits the drawn look better than a smooth tween would. The frames have to be yours: DropHome can move and blend your drawings, but it does not invent in-between drawings in your style.
 
 Hovering a piece plays its animation, and so does opening it, exactly like the built-in furniture.
 
 ### Live content on top of your art
 
-Some pieces show real files on top of the drawing: the picture on the TV, photos in the frames on the wall, notes on the fridge, the face in the mirror. Tell Roomy where those go with `slots`, in percent of the piece's canvas. Without slots, a custom piece simply shows no live content.
+Some pieces show real files on top of the drawing: the picture on the TV, photos in the frames on the wall, notes on the fridge, the face in the mirror. Tell DropHome where those go with `slots`, in percent of the piece's canvas. Without slots, a custom piece simply shows no live content.
 
 ### The house itself
 

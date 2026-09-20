@@ -24,11 +24,11 @@ const shell = (title, body) => `<!doctype html>
 </style></head><body><main>${body}</main></body></html>`;
 
 export function sharePage(file) {
-  if (!file) return shell('Nothing here', `<span class="mark">Roomy</span><h1>This link is not active</h1><p>The owner stopped sharing this file, or the link is wrong.</p>`);
+  if (!file) return shell('Nothing here', `<span class="mark">DropHome</span><h1>This link is not active</h1><p>The owner stopped sharing this file, or the link is wrong.</p>`);
   const url = `/share/${encodeURIComponent(file.token)}/file`;
   return shell(
     file.name,
-    `<span class="mark">Shared from ${esc(file.house ?? 'a Roomy house')}</span>
+    `<span class="mark">Shared from ${esc(file.house ?? 'a DropHome house')}</span>
      <h1>${esc(file.name)}</h1><p>${size(file.size)}</p>
      ${file.kind === 'image' ? `<img src="${url}" alt="${esc(file.name)}">` : ''}
      <a class="btn" href="${url}?download=1">Download</a>`,
@@ -36,7 +36,7 @@ export function sharePage(file) {
 }
 
 export function dropPage(info) {
-  if (!info) return shell('Nothing here', `<span class="mark">Roomy</span><h1>This mailbox link is not active</h1><p>Ask the owner for a new one.</p>`);
+  if (!info) return shell('Nothing here', `<span class="mark">DropHome</span><h1>This mailbox link is not active</h1><p>Ask the owner for a new one.</p>`);
   return shell(
     `Send files to ${info.house}`,
     `<span class="mark">Mailbox</span>

@@ -455,7 +455,7 @@ export const useApp = create<AppState>((set, get) => {
       try {
         const { token, url } = await store.share(id);
         patch([{ id, patch: { shared: { token, at: Date.now(), url } } }]);
-        get().toast(url ? 'Share link ready. It is in the guest book too.' : 'Marked as shared. Real links need the Roomy server running.', { tone: 'good' });
+        get().toast(url ? 'Share link ready. It is in the guest book too.' : 'Marked as shared. Real links need the DropHome server running.', { tone: 'good' });
       } catch {
         get().toast('Could not create a share link.', { tone: 'warn' });
       }

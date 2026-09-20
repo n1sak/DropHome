@@ -72,7 +72,7 @@ function clean(text: string | undefined, max: number): string {
 
 export function sortPrompt(files: FileItem[], house: House): string {
   const rows = files.map((f) => `${f.id} | ${f.name} | ${f.kind} | modified ${shortDate(f.modifiedAt)} | ${clean(f.snippet, 220) || '(no text)'}`);
-  return `You are the sorter for Roomy, an app that keeps files in a house instead of folders. New files were left on the porch. Decide where each one belongs.
+  return `You are the sorter for DropHome, an app that keeps files in a house instead of folders. New files were left on the porch. Decide where each one belongs.
 
 THE HOUSE. Rooms, then the furniture inside each (id | name | role | what goes there):
 ${outline(house)}
@@ -197,7 +197,7 @@ export async function askHouse(query: string, files: FileItem[], house: House, o
   };
 
   const rows = live.slice(0, 250).map((f) => `${f.id} | ${f.name} | ${where.get(f.furnitureId) ?? '?'} | ${shortDate(f.modifiedAt)} | ${f.tags.join(',')} | ${clean(f.snippet, 110)}`);
-  const prompt = `You help someone find things in Roomy, an app that keeps their files in a house. Answer their question using only the file list.
+  const prompt = `You help someone find things in DropHome, an app that keeps their files in a house. Answer their question using only the file list.
 
 QUESTION: ${query}
 

@@ -3,11 +3,9 @@ File storage that looks like your room. Keep files in the closet, the dresser, o
 <img width="1047" height="583" alt="Screenshot 2026-09-20 at 10 48 44 AM" src="https://github.com/user-attachments/assets/2b1d4641-b121-419c-8507-4b05f42e77bd" />
 https://youtube.com/shorts/1WZo-_bdsCs 
 
-In the app and in the code the project still goes by its working name, **Roomy**.
-
 **A house for your files.** Built for the Dropbox challenge: *turn digital chaos into something useful* and *reimagine how we organize digital content*.
 
-Folders have been around for decades, and nobody remembers what they put in them. But everybody knows where things go in a house. Recipes live in the kitchen. Schoolwork is on the desk, and last semester's is in the closet. Old stuff ends up in the attic. Roomy uses that instead of a folder tree.
+Folders have been around for decades, and nobody remembers what they put in them. But everybody knows where things go in a house. Recipes live in the kitchen. Schoolwork is on the desk, and last semester's is in the closet. Old stuff ends up in the attic. DropHome uses that instead of a folder tree.
 
 ![The whole house](docs/screenshots/house.png)
 

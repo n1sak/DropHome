@@ -29,7 +29,7 @@ function PreviewOf({ file }: { file: FileItem }) {
     const blob = await app.fileBlob(file);
     if (!blob) return app.toast('That file has no contents to download.', { tone: 'warn' });
     const result = await saveFile(file, blob);
-    if (result === 'unsupported') app.toast(`This viewer cannot save .${file.ext || 'this kind of'} files. Run Roomy from the repo to download anything.`, { tone: 'warn' });
+    if (result === 'unsupported') app.toast(`This viewer cannot save .${file.ext || 'this kind of'} files. Run DropHome from the repo to download anything.`, { tone: 'warn' });
   };
   const copyLink = async () => {
     const url = file.shared?.url;

@@ -48,7 +48,7 @@ if (fs.existsSync(manifestFile)) {
 }
 
 const html = [
-  '<title>Roomy</title>',
+  '<title>DropHome</title>',
   `<style>${css.replace(/<\/style/gi, '<\\/style')}</style>`,
   '<div id="root"></div>',
   artScript,

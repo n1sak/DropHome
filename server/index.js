@@ -1,5 +1,5 @@
 /**
- * Roomy server.
+ * DropHome server.
  *
  * Deliberately small: files go on disk, everything else is one JSON file.
  *   data/db.json        house layout, file records, share tokens
@@ -388,10 +388,10 @@ app.use((err, req, res, _next) => {
 
 const server = app.listen(PORT, (err) => {
   if (err) {
-    console.error(err.code === 'EADDRINUSE' ? `Port ${PORT} is already in use. Is another Roomy server running? Stop it, or set PORT to something else.` : err.message);
+    console.error(err.code === 'EADDRINUSE' ? `Port ${PORT} is already in use. Is another DropHome server running? Stop it, or set PORT to something else.` : err.message);
     process.exit(1);
   }
-  console.log(`Roomy server on http://localhost:${PORT}`);
+  console.log(`DropHome server on http://localhost:${PORT}`);
   console.log(`  data: ${DATA_DIR}`);
   console.log(`  sorting: ${hasAi() ? 'Claude' : 'built-in rules (set ANTHROPIC_API_KEY to use Claude)'}`);
   if (!fs.existsSync(path.join(CLIENT_DIST, 'index.html'))) console.log('  client: not built yet. Run "npm run dev" from the repo root, or "npm run build" first.');

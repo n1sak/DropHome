@@ -11,7 +11,7 @@ export function Splash() {
         <path d="M15 28v26h34V28" fill="var(--lamp)" stroke="currentColor" strokeWidth="4" strokeLinejoin="round" />
         <path d="M27 54V40h10v14" fill="var(--panel)" stroke="currentColor" strokeWidth="3.500" strokeLinejoin="round" />
       </svg>
-      <h1>Roomy</h1>
+      <h1>DropHome</h1>
       <p>{booting.step}{booting.total ? ` · ${booting.done} of ${booting.total}` : '…'}</p>
       <div className="splash-bar">
         <i style={{ width: `${pct}%` }} />

@@ -1,8 +1,8 @@
 {
-  "name": "roomy",
+  "name": "drophome",
   "version": "0.1.0",
   "private": true,
-  "description": "Roomy: a house for your files. A spatial reimagining of cloud storage where rooms, furniture and drawers replace folders.",
+  "description": "DropHome: a house for your files. A spatial reimagining of cloud storage where rooms, furniture and drawers replace folders.",
   "scripts": {
     "postinstall": "npm --prefix client install && npm --prefix server install",
     "dev": "concurrently -n server,client -c blue,magenta \"npm --prefix server run dev\" \"npm --prefix client run dev\"",
